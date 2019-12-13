@@ -28,7 +28,7 @@
 		<!-- NAVBAR -->
 		<nav class="navbar navbar-default navbar-fixed-top">
 			<div class="brand">
-				<a href="index.html"><img src="assets/img/logo-dark.png" alt="Klorofil Logo" class="img-responsive logo"></a>
+				<a href="index.html"><img src="{{url_for('static', filename='assets/img/logo-dark.png'}}" alt="Klorofil Logo" class="img-responsive logo"></a>
 			</div>
 			<div class="container-fluid">
 				<div class="navbar-btn">
@@ -483,12 +483,12 @@
 	</div>
 	<!-- END WRAPPER -->
 	<!-- Javascript -->
-	<script src="assets/vendor/jquery/jquery.min.js"></script>
-	<script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
-	<script src="assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-	<script src="assets/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
-	<script src="assets/vendor/chartist/js/chartist.min.js"></script>
-	<script src="assets/scripts/klorofil-common.js"></script>
+	<script src="{{url_for('static', filename='vendor/jquery/jquery.min.js'}}"></script>
+	<script src="{{url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js'}}"></script>
+	<script src="{{url_for('static', filename='vendor/jquery-slimscroll/jquery.slimscroll.min.js'}}"></script>
+	<script src="{{url_for('static', filename='vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js'}}"></script>
+	<script src="{{url_for('static', filename='vendor/chartist/js/chartist.min.js'}}"></script>
+	<script src="{{url_for('static', filename='scripts/klorofil-common.js'}}"></script>
 	<script>
 	$(function() {
 		var data, options;
