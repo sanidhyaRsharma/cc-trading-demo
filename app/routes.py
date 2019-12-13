@@ -8,4 +8,10 @@ def index():
 
 @app.route('/buy')
 def buy():
-    return render_template('buy.html')
+    sellers=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
+    return render_template('buy.html',len=len(sellers),sellers=sellers)
+
+@app.route('/send-request')
+def send_request(data):
+    print(seller)
+    return render_template('send-request.html',seller=data)
