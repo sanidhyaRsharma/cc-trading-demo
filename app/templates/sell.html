@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6">
+            <form action='/'>
+                <div class="form-group">
+                    <label for="title">Title of project:</label>
+                    <input type="text" class="form-control" id="title" placeholder="Eg. 60 MW Solar PV - Monte Plaza">
+                </div>
+                <div class="form-group">
+                    <label for="ref-num">UNFCCC reference number of project activity:</label>
+                    <input type="text" class="form-control" id="ref-num" placeholder="Eg. 00000">
+                </div>
+                <div class="form-group">
+                    <label for="carbon-credits">Certified amount of GHG emission reductions or GHG removals for this monitoring period:</label>
+                    <input type="number" id="carbon-credits" placeholder="Amount in tCO2e">
+                </div>
+                <div class="form-group">
+                    <label for="certificate">Upload certificate</label>
+                    <input type="file">
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
