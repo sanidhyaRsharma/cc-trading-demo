@@ -9,3 +9,7 @@ def index():
 @app.route('/buy')
 def buy():
     return render_template('buy.html')
+
+@app.route('/sell')
+def sell():
+    return render_template('sell.html')
