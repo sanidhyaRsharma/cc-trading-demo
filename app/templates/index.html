@@ -7,8 +7,8 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 	<!-- VENDOR CSS -->
-	<link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" href="assets/vendor/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css'}}">
+	<link rel="stylesheet" href="{{url_for('static', filename='vendor/font-awesome/css/font-awesome.min.css'}}">
 	<link rel="stylesheet" href="assets/vendor/linearicons/style.css">
 	<link rel="stylesheet" href="assets/vendor/chartist/css/chartist-custom.css">
 	<!-- MAIN CSS -->
@@ -86,7 +86,7 @@
 		</nav>
 		<!-- END NAVBAR -->
 		<!-- LEFT SIDEBAR -->
-		<div id="sidebar-nav" class="sidebar">
+		<!-- <div id="sidebar-nav" class="sidebar">
 			<div class="sidebar-scroll">
 				<nav>
 					<ul class="nav">
@@ -111,7 +111,7 @@
 					</ul>
 				</nav>
 			</div>
-		</div>
+		</div> -->
 		<!-- END LEFT SIDEBAR -->
 		<!-- MAIN -->
 		<div class="main">
@@ -119,7 +119,7 @@
 			<div class="main-content">
 				<div class="container-fluid">
 					<!-- OVERVIEW -->
-					<div class="panel panel-headline">
+					<!-- <div class="panel panel-headline">
 						<div class="panel-heading">
 							<h3 class="panel-title">Weekly Overview</h3>
 							<p class="panel-subtitle">Period: Oct 14, 2016 - Oct 21, 2016</p>
@@ -183,12 +183,12 @@
 								</div>
 							</div>
 						</div>
-					</div>
+					</div> -->
 					<!-- END OVERVIEW -->
 					<div class="row">
 						<div class="col-md-6">
 							<!-- RECENT PURCHASES -->
-							<div class="panel">
+							<!-- <div class="panel">
 								<div class="panel-heading">
 									<h3 class="panel-title">Recent Purchases</h3>
 									<div class="right">
@@ -252,12 +252,12 @@
 										<div class="col-md-6 text-right"><a href="#" class="btn btn-primary">View All Purchases</a></div>
 									</div>
 								</div>
-							</div>
+							</div> -->
 							<!-- END RECENT PURCHASES -->
 						</div>
 						<div class="col-md-6">
 							<!-- MULTI CHARTS -->
-							<div class="panel">
+							<!-- <div class="panel">
 								<div class="panel-heading">
 									<h3 class="panel-title">Projection vs. Realization</h3>
 									<div class="right">
@@ -268,14 +268,14 @@
 								<div class="panel-body">
 									<div id="visits-trends-chart" class="ct-chart"></div>
 								</div>
-							</div>
+							</div> -->
 							<!-- END MULTI CHARTS -->
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-7">
 							<!-- TODO LIST -->
-							<div class="panel">
+							<!-- <div class="panel">
 								<div class="panel-heading">
 									<h3 class="panel-title">To-Do List</h3>
 									<div class="right">
@@ -326,12 +326,12 @@
 										</li>
 									</ul>
 								</div>
-							</div>
+							</div> -->
 							<!-- END TODO LIST -->
 						</div>
 						<div class="col-md-5">
 							<!-- TIMELINE -->
-							<div class="panel panel-scrolling">
+							<!-- <div class="panel panel-scrolling">
 								<div class="panel-heading">
 									<h3 class="panel-title">Recent User Activity</h3>
 									<div class="right">
@@ -364,14 +364,14 @@
 									</ul>
 									<button type="button" class="btn btn-primary btn-bottom center-block">Load More</button>
 								</div>
-							</div>
+							</div> -->
 							<!-- END TIMELINE -->
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-4">
 							<!-- TASKS -->
-							<div class="panel">
+							<!-- <div class="panel">
 								<div class="panel-heading">
 									<h3 class="panel-title">My Tasks</h3>
 									<div class="right">
@@ -423,12 +423,12 @@
 										</li>
 									</ul>
 								</div>
-							</div>
+							</div> -->
 							<!-- END TASKS -->
 						</div>
 						<div class="col-md-4">
 							<!-- VISIT CHART -->
-							<div class="panel">
+							<!-- <div class="panel">
 								<div class="panel-heading">
 									<h3 class="panel-title">Website Visits</h3>
 									<div class="right">
@@ -439,12 +439,12 @@
 								<div class="panel-body">
 									<div id="visits-chart" class="ct-chart"></div>
 								</div>
-							</div>
+							</div> -->
 							<!-- END VISIT CHART -->
 						</div>
 						<div class="col-md-4">
 							<!-- REALTIME CHART -->
-							<div class="panel">
+							<!-- <div class="panel">
 								<div class="panel-heading">
 									<h3 class="panel-title">System Load</h3>
 									<div class="right">
@@ -465,7 +465,7 @@
 										<li>Processes: <span>259</span></li>
 									</ul>
 								</div>
-							</div>
+							</div> -->
 							<!-- END REALTIME CHART -->
 						</div>
 					</div>
