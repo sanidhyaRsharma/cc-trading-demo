@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, request
 from app import app
 
 @app.route('/')
@@ -10,6 +10,7 @@ def index():
 def buy():
     return render_template('buy.html')
 
-@app.route('/sell')
-def sell():
+@app.route('/sell', methods=['GET','POST'])
+def sell(req):
+    
     return render_template('sell.html')

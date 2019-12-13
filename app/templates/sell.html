@@ -3,7 +3,7 @@
 {% block content %}
     <div class="row">
         <div class="col-md-6">
-            <form action='/'>
+            <form action="" enctype=multipart/form-data>
                 <div class="form-group">
                     <label for="title">Title of project:</label>
                     <input type="text" class="form-control" id="title" placeholder="Eg. 60 MW Solar PV - Monte Plaza">
@@ -17,9 +17,15 @@
                     <input type="number" id="carbon-credits" placeholder="Amount in tCO2e" class="form-control">
                 </div>
                 <div class="form-group">
-                    <label for="certificate">Upload certificate</label>
-                    <input type="file">
+                    <label for="time-period">Period of validity:</label>
+                    <input type="number" class="form-control" id="time-period" placeholder="Time in number of months">
                 </div>
+                <div class="custom-file">
+                    <label class="custom-file-label" for="custom-file">Upload signed certificate</label>
+                    <input type="file" class="custom-file-input" id="custom-file" >
+                </div>
+                <br/>
+                <input type="submit" class="btn btn-primary">
             </form>
         </div>
     </div>
