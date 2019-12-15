@@ -3,9 +3,6 @@ from app import app
 import time
 from web3 import Web3, HTTPProvider
 
-contract_address = 
-
-
 @app.route('/')
 @app.route('/index')
 def index():
@@ -24,7 +21,6 @@ def send_request():
 
 @app.route('/sell', methods=['GET','POST'])
 def sell():
-<<<<<<< HEAD
     if request.method == 'POST':
         # INPUTS TO SMART CONTRACT addCredit
         # verified_certificate: string
@@ -37,13 +33,9 @@ def sell():
         payload['amount'] = request.form.get('amount')
         payload['time_period'] = request.form.get('time-period')
         #put certificate string in payload
-        
-    return render_template('sell.html')
-=======
     return render_template('sell.html')
 
 @app.route('/requests')
 def requests():
     requests=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
     return render_template('requests.html',len=len(requests),requests=requests)
->>>>>>> 01adf9c68250fc8b8f0e53176517626678730c60
