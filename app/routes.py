@@ -24,7 +24,6 @@ def send_request():
 
 @app.route('/sell', methods=['GET','POST'])
 def sell():
-<<<<<<< HEAD
     if request.method == 'POST':
         # INPUTS TO SMART CONTRACT addCredit
         # verified_certificate: string
@@ -39,11 +38,9 @@ def sell():
         #put certificate string in payload
         
     return render_template('sell.html')
-=======
-    return render_template('sell.html')
 
 @app.route('/requests')
 def requests():
     requests=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
     return render_template('requests.html',len=len(requests),requests=requests)
->>>>>>> 01adf9c68250fc8b8f0e53176517626678730c60
+
