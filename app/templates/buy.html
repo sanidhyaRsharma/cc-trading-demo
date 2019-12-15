@@ -1,17 +1,33 @@
 {% extends "base.html"%}
-
 {% block content %}
-<div class="panel">
+{% for i in range (0,len)  %}
+<div class="row">
+<div class="col-md-8">
+    
+    <div class="panel">
     <div class="panel-heading">
-        <h3 class="panel-title">Panel Default</h3>
+        <h3 class="panel-title">{{sellers[i]["Name"]}}</h3>
         <div class="right">
             <button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
             <button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
         </div>
+
     </div>
     <div class="panel-body">
-        <p>Objectively network visionary methodologies via best-of-breed users. Phosfluorescently initiate go forward leadership skills before an expanded array of infomediaries. Monotonectally incubate web-enabled communities rather than process-centric.</p>
+        <p> No.of carbon credits= {{sellers[i]["CarbonCredits"]}}
+        <div class="bottom">
+            <div class="right">
+                <form method="POST" action="send-request">
+                    <input type="hidden" name="seller-name" value="{{sellers[i]['Name']}}"/>
+                    <input type="hidden"  name="CarbonCredits"  value="{{sellers[i]['CarbonCredits']}}"/> 
+                    <button type="submit" class="btn btn-primary" > Buy</button> 
+                </form>
+                </script>
+            </div>
+        </div>
     </div>
 </div>
- 
+</div>
+</div>
+{% endfor %}
 {%endblock%}
