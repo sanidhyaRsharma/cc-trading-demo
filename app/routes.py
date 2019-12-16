@@ -125,6 +125,7 @@ def sell():
 
 
         # Save newly created Carbon Credit to blockchain
+        #TODO: replace testCertificateString with actual file
         if (addCredit("testCertificateString", addr, payload['amount'], int(payload['time_period'])*30*86400)):
             if addr in data_store.keys():
                 data_store[addr].append(payload)
