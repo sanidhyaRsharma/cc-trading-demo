@@ -16,7 +16,8 @@ w3 = Web3(HTTPProvider('http://localhost:7545'))
 contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
 data_store = {}
-user_store = {"abc@gmail.com": {'password': '12345', 'wallet_address':'0xe4D1E737a1D734F37Ec734D62791486f6EaaF469'}}
+user_store = {"abc@gmail.com": {'password': '12345', 'wallet_address':'0xe4D1E737a1D734F37Ec734D62791486f6EaaF469'},
+              "un@unfdccc.com": {'password': 'qwerty', 'wallet_address': '0x33D6F007E249C1e6dfA0F23E0fDa9db8c0DbA3C0'}}
 
 def addCredit(certificate, owner, amount, ttl):
     nonce = w3.eth.getTransactionCount(WALLET_ADDRESS)
@@ -103,6 +104,10 @@ def send_request():
 @app.route('/sell', methods=['GET','POST'])
 @login_required
 def sell():
+    if user_store[Session['username']]['wallet_address'] != WALLET_ADDRESS:
+        return """
+            <h3>Access Denied</h3>
+        """
     if request.method == 'POST':
         # INPUTS TO SMART CONTRACT addCredit
         # verified_certificate: string
@@ -136,6 +141,5 @@ def sell():
 @login_required
 def requests():
     requests=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
-    # requests=
 
-    return render_template('requests.html',len=len(requests),requests=requests)
+    return render_template('requests.html',len=len(requests),requests=data_store)
