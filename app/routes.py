@@ -19,6 +19,8 @@ data_store = {}
 user_store = {"abc@gmail.com": {'password': '12345', 'wallet_address':'0xe4D1E737a1D734F37Ec734D62791486f6EaaF469'},
               "un@unfdccc.com": {'password': 'qwerty', 'wallet_address': '0x33D6F007E249C1e6dfA0F23E0fDa9db8c0DbA3C0'}}
 
+purchase_request_store={}
+
 def addCredit(certificate, owner, amount, ttl):
     nonce = w3.eth.getTransactionCount(WALLET_ADDRESS)
     txn_dict =contract.functions.addCredit(certificate, w3.toChecksumAddress(owner), int(amount), int(ttl)).buildTransaction({
@@ -57,8 +59,9 @@ def register():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        wallet_address = request.form.get('wallet_address')
+        wallet_address = request.form.get('wallet-address')
         user_store[username] = {'password':password, 'wallet_address':wallet_address}
+        print(user_store)
         return redirect(url_for('index'))
     return render_template('register.html')
 
@@ -84,21 +87,30 @@ def login():
 @app.route('/index')
 @login_required
 def index():
-    return render_template('index.html', notif="", ds = data_store)
+    return render_template('index.html', notif="", ds = data_store, session=Session)
+
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template('page-profile.html', username = Session['username'], wallet_address=user_store[Session['username']]['wallet_address'])
 
 @app.route('/buy')
 @login_required
 def buy():
     # sellers=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
-
-    return render_template('buy.html',sellers=data_store)
+    return render_template('buy.html',sellers=data_store, buyer=user_store[Session['username']], session=Session)
 
 @app.route('/send-request',methods=['GET', 'POST'])
 @login_required
 def send_request():
     if request.method =='POST':
         seller_data = request.form.to_dict()
-    return render_template('send-request.html',data=seller_data)
+        if seller_data['wallet-address'] in purchase_request_store.keys():
+            purchase_request_store[seller_data['wallet-address']].append(seller_data)
+        else:
+            purchase_request_store[seller_data['wallet-address']] = [seller_data]
+        return redirect(url_for('index'))
+    return render_template('send-request.html',data=seller_data, session=Session)
     
 
 @app.route('/sell', methods=['GET','POST'])
@@ -116,7 +128,7 @@ def sell():
         # ttl : seconds
         payload = {}
         payload['name_of_project'] = request.form.get('title')
-        payload['reference_num'] = request.form.get('ref_num')
+        payload['reference_num'] = request.form.get('ref-num')
         payload['amount'] = request.form.get('amount')
         payload['time_period'] = request.form.get('time-period')
         addr = request.form.get('wallet-address')
@@ -131,16 +143,57 @@ def sell():
                 data_store[addr].append(payload)
             else:
                 data_store[addr] = [payload]
-            return render_template("index.html", notif = "Certificate added to blockchain", ds = data_store)
+            return render_template("index.html", notif = "Certificate added to blockchain", ds = data_store, session=Session)
         else:
-            return render_template("index.html", notif = "Failed!", ds= data_store)
+            return render_template("index.html", notif = "Failed!", ds= data_store, session=Session)
 
 
-    return render_template('sell.html')
+    return render_template('sell.html', session=Session)
 
 @app.route('/requests')
 @login_required
 def requests():
-    requests=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
+    # requests=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
+    requests = purchase_request_store[user_store[Session['username']]['wallet_address']]
+    print(requests)
+    return render_template('requests.html',len=len(requests),requests=requests, session=Session)
 
-    return render_template('requests.html',len=len(requests),requests=data_store)
+@app.route('/logout')
+@login_required
+def logout():
+    Session.pop('logged_in')
+    Session.pop('username')
+    return redirect(url_for('login'))
+
+@app.route('/accept', methods=['GET','POST'])
+@login_required
+def accept():
+    print('/accept is called')
+    if request.method == "POST": 
+        data =  request.get_json()
+        print(data['i'])
+        current_obj = purchase_request_store[user_store[Session['username']]['wallet_address']].pop(int(data['i']))
+        curr_list = data_store[current_obj['wallet-address']]
+        count = 0
+        idx = 0
+        for item in curr_list:
+            if item['reference_num'] == current_obj['reference-num']:
+                idx = count
+            count+=1
+        
+        if current_obj['receiver-wallet-address'] in data_store.keys():
+            data_store[current_obj['receiver-wallet-address']].append(data_store[current_obj['wallet-address']][idx])
+        else:
+            data_store[current_obj['receiver-wallet-address']] = [(data_store[current_obj['wallet-address']][idx])]
+        data_store[current_obj['wallet-address']].pop(idx)
+    return redirect(url_for('requests'))
+
+@app.route('/reject', methods=['GET','POST'])
+@login_required
+def reject():
+    print('/reject is called')
+    if request.method == 'POST':
+        data =  request.get_json()
+        current_obj = purchase_request_store[user_store[Session['username']]['wallet_address']].pop(int(data['i']))
+        print(current_obj)
+    return redirect(url_for('requests'))

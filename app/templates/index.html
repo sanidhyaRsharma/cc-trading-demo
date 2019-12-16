@@ -4,9 +4,26 @@
     <h1>Carbon Credit Exchange</h1>
     <br>
     <p>{{notif}}</p>
-    <p>
-        {% for addr in ds.keys() %}
-            <p>{{addr}}</p>
+        {% for seller in ds.keys()%}
+            {% for item in ds[seller] %}
+            <div class="row">
+            <div class="col-md-8">
+                
+                <div class="panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{seller}}</h3>
+                    <div class="right">
+                        <!-- <button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button> -->
+                        <button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
+                    </div>
+
+                </div>
+                <div class="panel-body">
+                    <p> No.of carbon credits= {{item['amount']}}
+                </div>
+            </div>
+            </div>
+            </div>
+            {% endfor %}
         {% endfor %}
-    </p>
 {% endblock %}
