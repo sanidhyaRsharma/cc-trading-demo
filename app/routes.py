@@ -6,17 +6,20 @@ from .contract_abi import abi
 from web3 import Web3, HTTPProvider
 
 Session = {}
-CONTRACT_ADDR = '0x091590dE64a68dC63502d9f674552ba00867D4a1'
-WALLET_PRIVATE_KEY = '9C0A71E91E49C55A9BC537E5A61B015FC82C7FA4616B6DAEB42D442933805349'
-WALLET_ADDRESS = '0x33D6F007E249C1e6dfA0F23E0fDa9db8c0DbA3C0'
+'''
+    Details of certifying auth
+'''
+CONTRACT_ADDR = '0xd092A18C26c839b2965Ad1f24d45B8961645Ca4E'
+WALLET_PRIVATE_KEY = '0x0bd01389c284983927b6012209cf11274fe0693516bae77e619e41f7f8f0b094'
+WALLET_ADDRESS = '0xD02c0133b1202be3C6915B6Dc53a23cc9788f336'
 
-w3 = Web3(HTTPProvider('http://localhost:7545'))
+w3 = Web3(HTTPProvider('http://localhost:8545'))
 # w3.eth.enable_unaudited_features()
 
 contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
 data_store = {}
-user_store = {"abc@gmail.com": {'password': '12345', 'wallet_address':'0xe4D1E737a1D734F37Ec734D62791486f6EaaF469'}}
+user_store = {"abc@gmail.com": {'password': '12345', 'wallet_address':'0x68BD5992fF2f1Ad5437b4301Bb09d96306Ee038A'}}
 
 def addCredit(certificate, owner, amount, ttl):
     nonce = w3.eth.getTransactionCount(WALLET_ADDRESS)
