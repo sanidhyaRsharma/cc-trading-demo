@@ -1,10 +1,11 @@
-from flask import render_template, request
+from flask import render_template, request, flash, redirect, url_for
+from functools import wraps
 from app import app
 import time
 from .contract_abi import abi
 from web3 import Web3, HTTPProvider
 
-
+Session = {}
 CONTRACT_ADDR = '0x091590dE64a68dC63502d9f674552ba00867D4a1'
 WALLET_PRIVATE_KEY = '9C0A71E91E49C55A9BC537E5A61B015FC82C7FA4616B6DAEB42D442933805349'
 WALLET_ADDRESS = '0x33D6F007E249C1e6dfA0F23E0fDa9db8c0DbA3C0'
@@ -15,6 +16,7 @@ w3 = Web3(HTTPProvider('http://localhost:7545'))
 contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
 data_store = {}
+user_store = {"abc@gmail.com": {'password': '12345', 'wallet_address':'0xe4D1E737a1D734F37Ec734D62791486f6EaaF469'}}
 
 def addCredit(certificate, owner, amount, ttl):
     nonce = w3.eth.getTransactionCount(WALLET_ADDRESS)
@@ -39,18 +41,59 @@ def addCredit(certificate, owner, amount, ttl):
     return True
 
 
+def login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in Session:
+            return f(*args, **kwargs)
+        else:
+            flash('UNAUTHORIZED! Login required')
+            return redirect(url_for('login'))
+    return wrap
+
+@app.route('/register', methods=['GET','POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        wallet_address = request.form.get('wallet_address')
+        user_store[username] = {'password':password, 'wallet_address':wallet_address}
+        return redirect(url_for('index'))
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET','POST'])
+def login():
+    if request.method == 'POST':    
+        username = request.form.get('username')
+        print(username)
+        if username is None:
+            return render_template('page-login.html')
+        print(user_store.keys(), username)
+        if username not in user_store.keys():
+            return """
+                <h1>Incorrect username</h1>
+            """
+        if(user_store[username]['password'] == request.form.get('password')):
+            Session['username'] = username
+            Session['logged_in'] = True
+            return redirect(url_for('index'))
+    return render_template('page-login.html')
+
 @app.route('/')
 @app.route('/index')
+@login_required
 def index():
     return render_template('index.html', notif="", ds = data_store)
 
 @app.route('/buy')
+@login_required
 def buy():
     # sellers=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
 
     return render_template('buy.html',sellers=data_store)
 
 @app.route('/send-request',methods=['GET', 'POST'])
+@login_required
 def send_request():
     if request.method =='POST':
         seller_data = request.form.to_dict()
@@ -58,6 +101,7 @@ def send_request():
     
 
 @app.route('/sell', methods=['GET','POST'])
+@login_required
 def sell():
     if request.method == 'POST':
         # INPUTS TO SMART CONTRACT addCredit
@@ -89,7 +133,9 @@ def sell():
     return render_template('sell.html')
 
 @app.route('/requests')
+@login_required
 def requests():
     requests=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
     # requests=
+
     return render_template('requests.html',len=len(requests),requests=requests)
