@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1> THIS IS A TEST! </h1>
+    <h1>Carbon Credit Exchange</h1>
+    <br>
+    <p>{{notif}}</p>
+    <p>
+        {% for addr in ds.keys() %}
+            <p>{{addr}}</p>
+        {% endfor %}
+    </p>
 {% endblock %}

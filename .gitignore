@@ -5,3 +5,4 @@ venv/
 __pycache__/
 .vscode/
 backup phrase
+app/static/node_modules/

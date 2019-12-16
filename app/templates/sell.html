@@ -20,12 +20,16 @@
                     <label for="time-period">Period of validity:</label>
                     <input type="number" class="form-control" id="time-period" name="time-period" placeholder="Time in number of months">
                 </div>
+                <div class="form-group">
+                    <label for="wallet-address">Address of owner</label>
+                    <input type="text" class="form-control" id="wallet-address" name="wallet-address" placeholder="Address">
+                </div>
                 <div class="custom-file">
                     <label class="custom-file-label" for="custom-file">Upload signed certificate</label>
                     <input type="file" class="custom-file-input" id="custom-file" name="certificate" >
                 </div>
                 <br/>
-                <input type="submit" class="btn btn-primary">
+                <button type="submit" id="saveButton" class="btn btn-primary"> Submit </button>
             </form>
         </div>
     </div>

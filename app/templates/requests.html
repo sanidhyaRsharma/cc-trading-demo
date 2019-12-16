@@ -81,8 +81,8 @@ footer a {
                             <tr>
                                 <th scope="col"> </th>
                                 <th scope="col">Product</th>
-                                <th scope="col" class="text-center">Quantity</th>
-                                <th scope="col" class="text-right">Price</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Price</th>
                                 <th> </th>
                             </tr>
                         </thead>
@@ -93,18 +93,18 @@ footer a {
                                 <td><img src="https://dummyimage.com/50x50/55595c/fff" /> </td>
                                 <td>{{requests[i]['Name']}}</td>
                                 <td>{{requests[i]['CarbonCredits']}}</td>
-                                <td class="text-right">124,90 €</td>
-                                <td class="text-right"><button class="btn btn-sm btn-success"><i class="fa fa-check-circle"></i></i> </button> </td>
-                                <td class="text-right"><button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> </button> </td>
+                                <td >124,90 €</td>
+                                <td >
+                                    <button class="btn btn-sm btn-success"><i class="fa fa-check-circle"></i></i> </button>
+                                    <button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> </button> 
+                                </td>
                             </tr>
                             {%endfor%}
                             <tr>
                                 <td></td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
                                 <td><strong>Total</strong></td>
-                                <td class="text-right"><strong>346,90 €</strong></td>
+                                <td><strong>346,90 €</strong></td>
                             </tr>
                         </tbody>
                     </table>
