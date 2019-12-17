@@ -11,9 +11,9 @@ Session = {}
 '''
     Details of certifying auth
 '''
-CONTRACT_ADDR = '0x92A4680C2E9768F4A0C037f18a2e4eA6FfA45Db3'
-WALLET_PRIVATE_KEY = '0x948dbb45b266e772b903be4eb68bf3678c5f29484212ac880df71983d12ef87d'
-WALLET_ADDRESS = '0x81B579f5943E5334593DF3761Eb868fB54CE5195'
+CONTRACT_ADDR = '0x091590dE64a68dC63502d9f674552ba00867D4a1'
+WALLET_PRIVATE_KEY = '9c0a71e91e49c55a9bc537e5a61b015fc82c7fa4616b6daeb42d442933805349'
+WALLET_ADDRESS = '0x33D6F007E249C1e6dfA0F23E0fDa9db8c0DbA3C0'
 
 w3 = Web3(HTTPProvider('http://localhost:8545'))
 # w3.eth.enable_unaudited_features()
@@ -29,7 +29,7 @@ purchase_request_store={}
 def addCredit(certificate, owner, amount, ttl):
     nonce = w3.eth.getTransactionCount(WALLET_ADDRESS)
     txn_dict =contract.functions.addCredit(certificate, w3.toChecksumAddress(owner), int(amount), int(ttl)).buildTransaction({
-        'gas':2000000,
+        'gas':3000000,
         'gasPrice':w3.eth.gasPrice,
         'nonce':nonce
     })
