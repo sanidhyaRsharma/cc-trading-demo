@@ -1,5 +1,5 @@
-abi = """
-[
+{
+    "abi": [
         {
             "constant": false,
             "inputs": [
@@ -175,5 +175,6 @@ abi = """
             "stateMutability": "nonpayable",
             "type": "constructor"
         }
-    ]
-"""
+    ],
+    "contract_address": "0x92A4680C2E9768F4A0C037f18a2e4eA6FfA45Db3"
+}
