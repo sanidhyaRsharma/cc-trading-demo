@@ -4,22 +4,23 @@ from app import app
 import time
 from .contract_abi import abi
 from web3 import Web3, HTTPProvider
+from Crypto.Hash import SHA256
+import os
 
 Session = {}
 '''
     Details of certifying auth
 '''
-CONTRACT_ADDR = '0xd092A18C26c839b2965Ad1f24d45B8961645Ca4E'
-WALLET_PRIVATE_KEY = '0x0bd01389c284983927b6012209cf11274fe0693516bae77e619e41f7f8f0b094'
-WALLET_ADDRESS = '0xD02c0133b1202be3C6915B6Dc53a23cc9788f336'
+CONTRACT_ADDR = '0x92A4680C2E9768F4A0C037f18a2e4eA6FfA45Db3'
+WALLET_PRIVATE_KEY = '0x948dbb45b266e772b903be4eb68bf3678c5f29484212ac880df71983d12ef87d'
+WALLET_ADDRESS = '0x81B579f5943E5334593DF3761Eb868fB54CE5195'
 
 w3 = Web3(HTTPProvider('http://localhost:8545'))
 # w3.eth.enable_unaudited_features()
-
 contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
 data_store = {}
-user_store = {"abc@gmail.com": {'password': '12345', 'wallet_address':'0x68BD5992fF2f1Ad5437b4301Bb09d96306Ee038A'}}
+user_store = {"abc@gmail.com": {'password': '12345', 'wallet_address':'0x27AA652E77ba3ceE2Da4802a3669E6F68faAed3f'}}
 
 def addCredit(certificate, owner, amount, ttl):
     nonce = w3.eth.getTransactionCount(WALLET_ADDRESS)
@@ -43,6 +44,8 @@ def addCredit(certificate, owner, amount, ttl):
     print(tx_receipt)
     return True
 
+def generate_hash(data):
+    return SHA256.new(data).hexdigest()
 
 def login_required(f):
     @wraps(f)
@@ -119,21 +122,33 @@ def sell():
         payload['time_period'] = request.form.get('time-period')
         addr = request.form.get('wallet-address')
 
+
+        save_dir = os.path.join(os.getcwd(), 'xyz.pdf')
+        print(save_dir)
+        print(request.files['certificate'].save(save_dir))
         # put certificate string in payload
 
 
         # Save newly created Carbon Credit to blockchain
-        if (addCredit("testCertificateString", addr, payload['amount'], int(payload['time_period'])*30*86400)):
-            if addr in data_store.keys():
-                data_store[addr].append(payload)
-            else:
-                data_store[addr] = [payload]
-            return render_template("index.html", notif = "Certificate added to blockchain", ds = data_store)
-        else:
+        try :
+            with open(save_dir, "rb") as signed_doc:
+                signed_doc_str = signed_doc.read()
+                print(type(signed_doc_str))
+                signed_doc_hash = generate_hash(signed_doc_str)
+                print(signed_doc_hash)
+                if (addCredit(signed_doc_hash, addr, payload['amount'], int(payload['time_period'])*30*86400)):
+                    if addr in data_store.keys():
+                        data_store[addr].append(payload)
+                    else:
+                        data_store[addr] = [payload]
+                    return render_template("index.html", notif = "Certificate added to blockchain", ds = data_store)
+                else:
+                    return render_template("index.html", notif = "Failed!", ds= data_store)
+        except Exception as e:
             return render_template("index.html", notif = "Failed!", ds= data_store)
-
-
-    return render_template('sell.html')
+    else :
+        return render_template('sell.html')
+    
 
 @app.route('/requests')
 @login_required
