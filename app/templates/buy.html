@@ -19,9 +19,13 @@
         <div class="bottom">
             <div class="right">
                 <form method="POST" action="send-request">
-                    <input type="hidden" name="seller-name" value="{{seller}}"/>
-                    <input type="hidden"  name="CarbonCredits"  value="{{item['amount']}}"/> 
-                    <button type="submit" class="btn btn-primary" > Buy</button> 
+                    <input type="hidden" name="wallet-address" value="{{seller}}"/>
+                    <input type="hidden" name="amount" value="{{item['amount']}}"/> 
+                    <input type="hidden" name="name-of-project" value="{{item['name_of_project']}}"/>
+                    <input type="hidden" name="reference-num" value="{{item['reference_num']}}"/>
+                    <input type="hidden" name="time-period" value="{{item['time_period']}}"/>
+                    <input type="hidden" name="receiver-wallet-address" value="{{buyer['wallet_address']}}"/>
+                    <button type="submit" class="btn btn-primary">  Buy </button> 
                 </form>
                 </script>
             </div>
