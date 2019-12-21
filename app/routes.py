@@ -15,38 +15,44 @@ CONTRACT_ADDR = '0x091590dE64a68dC63502d9f674552ba00867D4a1'
 WALLET_PRIVATE_KEY = '9c0a71e91e49c55a9bc537e5a61b015fc82c7fa4616b6daeb42d442933805349'
 WALLET_ADDRESS = '0x33D6F007E249C1e6dfA0F23E0fDa9db8c0DbA3C0'
 
-w3 = Web3(HTTPProvider('http://localhost:8545'))
+w3 = Web3(HTTPProvider('http://localhost:7545'))
 # w3.eth.enable_unaudited_features()
 contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
 data_store = {}
 
-user_store = {"abc@gmail.com": {'password': '12345', 'wallet_address':'0xe4D1E737a1D734F37Ec734D62791486f6EaaF469'},
-              "un@unfdccc.com": {'password': 'qwerty', 'wallet_address': '0x33D6F007E249C1e6dfA0F23E0fDa9db8c0DbA3C0'}}
+user_store = {"company1@gmail.com": {'password': '12345', 'wallet_address':'0xe4D1E737a1D734F37Ec734D62791486f6EaaF469'},
+              "un@unfdccc.com": {'password': 'qwerty', 'wallet_address': '0x33D6F007E249C1e6dfA0F23E0fDa9db8c0DbA3C0'},
+              "company2@gmail.com": {'password': '12345', 'wallet_address':'0x296a34459D0B38D1ec759b31a5DdBd118D64978b'}}
 
 purchase_request_store={}
 
 def addCredit(certificate, owner, amount, ttl):
+    print("Inside addCredit")
     nonce = w3.eth.getTransactionCount(WALLET_ADDRESS)
-    txn_dict =contract.functions.addCredit(certificate, w3.toChecksumAddress(owner), int(amount), int(ttl)).buildTransaction({
-        'gas':3000000,
-        'gasPrice':w3.eth.gasPrice,
+    txn_dict =contract.functions.addCredits(certificate, w3.toChecksumAddress(owner), int(amount), int(ttl)).buildTransaction({
         'nonce':nonce
     })
+    # event_filter = contract.events.
     signed_txn = w3.eth.account.signTransaction(txn_dict, private_key=WALLET_PRIVATE_KEY)
     result = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
+    print(result)
     tx_receipt = w3.eth.getTransactionReceipt(result)
+    print(tx_receipt)
     count = 0
 
     while tx_receipt is None and count < 30:
-        time.sleep(3)
+        time.sleep(20)
         tx_receipt = w3.eth.getTransactionReceipt(result)
         print(tx_receipt)
     
-    if tx_receipt is None:
-        return False
     print(tx_receipt)
-    return True
+
+    if tx_receipt is None:
+        return False, -1
+    uuid = int(tx_receipt['logs'][0]['data'], 16)
+    print(uuid)
+    return True, uuid
 
 def generate_hash(data):
     return SHA256.new(data).hexdigest()
@@ -154,15 +160,19 @@ def sell():
                 print(type(signed_doc_str))
                 signed_doc_hash = generate_hash(signed_doc_str)
                 print(signed_doc_hash)
-                if (addCredit(signed_doc_hash, addr, payload['amount'], int(payload['time_period'])*30*86400)):
+                result, uuid= addCredit(signed_doc_hash, addr, payload['amount'], int(payload['time_period'])*30*86400)
+                print("CHECK", result, uuid)
+                if (result):
+                    payload['uuid'] = uuid
                     if addr in data_store.keys():
                         data_store[addr].append(payload)
                     else:
                         data_store[addr] = [payload]
                     return render_template("index.html", notif = "Certificate added to blockchain", ds = data_store)
                 else:
-                    return render_template("index.html", notif = "Failed!", ds= data_store)
+                    return render_template("index.html", notif = "Failed!2", ds= data_store)
         except Exception as e:
+            print(e)
             return render_template("index.html", notif = "Failed!", ds= data_store)
 
 

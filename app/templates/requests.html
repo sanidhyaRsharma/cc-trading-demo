@@ -80,6 +80,7 @@ footer a {
                         <thead>
                             <tr>
                                 <!-- <th scope="col"> </th> -->
+                                <th scope="col">UUID</th>
                                 <th scope="col">Project</th>
                                 <th scope="col">Reference Number</th>
                                 <th scope="col">Amount</th>
@@ -91,12 +92,13 @@ footer a {
                             {% for i in range(len)  %}
                             <tr>
                                 <!-- <td><img src="https://dummyimage.com/50x50/55595c/fff" /> </td> -->
-                                <td>{{requests[i]['name-of-project']}}</td>
-                                <td>{{requests[i]['reference-num']}}</td>
-                                <td>{{requests[i]['amount']}}</td>
+                                <td id="uuid">{{requests[i]['uuid']}}</td>
+                                <td id="name">{{requests[i]['name-of-project']}}</td>
+                                <td id="ref">{{requests[i]['reference-num']}}</td>
+                                <td id="amt">{{requests[i]['amount']}}</td>
                                 <!-- <td >124,90 €</td> -->
                                 <td >
-                                    <button class="btn btn-sm btn-success" onclick="accept('{{i}}')"><i class="fa fa-check-circle"></i></i> </button>
+                                    <button class="btn btn-sm btn-success" onclick="accept('{{i}}','{{requests[i]['wallet-address']}}', '{{requests[i]['receiver-wallet-address']}}','{{requests[i]['uuid']}}','{{requests[i]['amount']}}')"><i class="fa fa-check-circle"></i></i> </button>
                                     <button class="btn btn-sm btn-danger"  onclick="reject('{{i}}')"><i class="fa fa-trash"></i> </button> 
                                 </td>
                             </tr>
@@ -108,55 +110,41 @@ footer a {
         </div>
     </div>
     <script>
-        window.onload = function(){
-            if(window.ethereum) {
-                window.web3 = new Web3(ethereum);
-                try{
-                    await ethereum.enable();;
-                }
-                catch(err){
-                    console.log('User denied access to wallet');
-                }
+        window.addEventListener('load', async () => {
+            if(typeof web3 !== 'undefined') {
+                web3 = new Web3(web3.currentProvider);
             }
-
-            const abi = [
-	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
+            else{
+                web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+            }
+            web3.eth.defaultAccount = web3.eth.accounts[0];
+        const abi = [
 	{
 		"constant": false,
 		"inputs": [
 			{
 				"internalType": "string",
-				"name": "verified_certificate",
+				"name": "_certi_hash",
 				"type": "string"
 			},
 			{
 				"internalType": "address",
-				"name": "owner",
+				"name": "_owner_address",
 				"type": "address"
 			},
 			{
 				"internalType": "uint256",
-				"name": "amount",
+				"name": "_amount",
 				"type": "uint256"
 			},
 			{
 				"internalType": "uint256",
-				"name": "ttl",
+				"name": "_ttl",
 				"type": "uint256"
 			}
 		],
-		"name": "addCredit",
+		"name": "addCredits",
 		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			},
 			{
 				"internalType": "uint256",
 				"name": "",
@@ -168,45 +156,79 @@ footer a {
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "getBalanceCount",
-		"outputs": [
+		"constant": false,
+		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "count",
-				"type": "uint256"
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
 			}
 		],
-		"payable": false,
-		"stateMutability": "view",
+		"name": "retireCredits",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [],
-		"name": "getCCListCount",
-		"outputs": [
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_owner_address",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_receiver_address",
+				"type": "address"
+			},
 			{
 				"internalType": "uint256",
-				"name": "",
+				"name": "_uuid",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
 				"type": "uint256"
 			}
 		],
-		"payable": false,
-		"stateMutability": "view",
+		"name": "transferCredits",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
 		"type": "function"
+	},
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "uuid",
+				"type": "uint256"
+			}
+		],
+		"name": "addEvent",
+		"type": "event"
 	},
 	{
 		"constant": true,
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
 			}
 		],
-		"name": "getCarbonCredit",
+		"name": "viewCurrentBalance",
 		"outputs": [
 			{
 				"components": [
@@ -227,8 +249,18 @@ footer a {
 					},
 					{
 						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
 						"name": "ttl",
 						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "certi_hash",
+						"type": "string"
 					},
 					{
 						"internalType": "bool",
@@ -236,63 +268,41 @@ footer a {
 						"type": "bool"
 					}
 				],
-				"internalType": "struct ReceiverPays.CarbonCredit",
+				"internalType": "struct ReceiverPays.CarbonCredits[]",
 				"name": "",
-				"type": "tuple"
+				"type": "tuple[]"
 			}
 		],
 		"payable": false,
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "getUUID",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "incUUID",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_uuid",
-				"type": "uint256"
-			}
-		],
-		"name": "retireCredit",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]
         const address = "0x091590dE64a68dC63502d9f674552ba00867D4a1";
 
         myContract = new web3.eth.Contract(abi, address);
-
-    
-        }
-        function accept(i){
+        console.log(myContract);
+        });
+        function accept(i, owner_address, recv_address, uuid, amount){
             // TODO Call transfer credits to write transaction to blockchain
+
+            // web3.eth.getAccounts(function(error, accounts) {
+            //     if(error){
+            //         console.log(error);
+            //     }
+            //     const account = accounts[0];
+            //     console.log(account)
+            
+            myContract.methods.transferCredits(owner_address, recv_address, uuid, amount).send({ from: owner_address }, function (err, res) {
+            if (err) {
+                console.log(err);
+                alert("Permission Denied");
+            }
+            else
+                alert("Record added Successfully !!");
+        });
+
+            // });
             $.ajax(
                 {
                     dataType:"json",
