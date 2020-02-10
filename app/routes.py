@@ -11,9 +11,9 @@ Session = {}
 '''
     Details of certifying auth
 '''
-CONTRACT_ADDR = '0x091590dE64a68dC63502d9f674552ba00867D4a1'
-WALLET_PRIVATE_KEY = '9c0a71e91e49c55a9bc537e5a61b015fc82c7fa4616b6daeb42d442933805349'
-WALLET_ADDRESS = '0x33D6F007E249C1e6dfA0F23E0fDa9db8c0DbA3C0'
+CONTRACT_ADDR = '0xF2c77a25271ed0ACbc53132Aa00133F7ab7D4930'
+WALLET_PRIVATE_KEY = '57ff5e0dab376a0d67bfd3009532df760d9c6496b261360f479200ed1264d0fb'
+WALLET_ADDRESS = '0x8D031d67D5e904640994D3D541A70836c88dB3C3'
 
 w3 = Web3(HTTPProvider('http://localhost:8545'))
 # w3.eth.enable_unaudited_features()
@@ -21,7 +21,7 @@ contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
 data_store = {}
 
-user_store = {"abc@gmail.com": {'password': '12345', 'wallet_address':'0xe4D1E737a1D734F37Ec734D62791486f6EaaF469'},
+user_store = {"abc@gmail.com": {'password': '12345', 'wallet_address':'0xE7b8F7F7E1ebBAb6588DA32ef3CEc78554Cf6aa6'},
               "un@unfdccc.com": {'password': 'qwerty', 'wallet_address': '0x33D6F007E249C1e6dfA0F23E0fDa9db8c0DbA3C0'}}
 
 purchase_request_store={}

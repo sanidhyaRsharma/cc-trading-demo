@@ -24,7 +24,8 @@ def deploy_contract(contract_interface):
 
 # compile all contract files
 
-PATH_TO_SOLIDITY_PROGRAM = '/home/yash/Desktop/cc_smart_contract/cc-trading-demo/CarbonCreditContract.sol'
+PATH_TO_SOLIDITY_PROGRAM = 'E:\Blockchain\Python-Ethereum\cc-trading-demo\CarbonCreditContract.sol'
+
 
 contracts = compile_files([PATH_TO_SOLIDITY_PROGRAM])
 #print(contracts)
