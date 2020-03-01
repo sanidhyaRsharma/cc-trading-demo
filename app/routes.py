@@ -5,7 +5,7 @@ import time
 from .contract_abi import abi
 from web3 import Web3, HTTPProvider
 from Crypto.Hash import SHA256
-import os
+import os, json
 
 Session = {}
 '''
@@ -24,6 +24,12 @@ data_store = {}
 user_store = {"company1@gmail.com": {'password': '12345', 'wallet_address':'0xe4D1E737a1D734F37Ec734D62791486f6EaaF469'},
               "un@unfdccc.com": {'password': 'qwerty', 'wallet_address': '0x33D6F007E249C1e6dfA0F23E0fDa9db8c0DbA3C0'},
               "company2@gmail.com": {'password': '12345', 'wallet_address':'0x296a34459D0B38D1ec759b31a5DdBd118D64978b'}}
+
+with open('user_store.json', 'w') as filep:
+    json.dump(user_store, filep)
+
+with open('user_store.json', 'r') as filep:
+    user_store = json.load(filep)
 
 purchase_request_store={}
 
@@ -75,6 +81,8 @@ def register():
         wallet_address = request.form.get('wallet-address')
         user_store[username] = {'password':password, 'wallet_address':wallet_address}
         print(user_store)
+        with open('user_store.json', 'w') as filep:
+            json.dump(user_store, filep)
         return redirect(url_for('index'))
     return render_template('register.html')
 
