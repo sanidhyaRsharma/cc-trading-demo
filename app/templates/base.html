@@ -13,12 +13,18 @@
 	<link rel="stylesheet" href="{{url_for('static', filename='vendor/chartist/css/chartist-custom.css')}}">
 	<!-- MAIN CSS -->
 	<link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
+	<!--Modal css-->
 	<!-- GOOGLE FONTS -->
 	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 	<!-- ICONS -->
 	<link rel="shortcut icon" href="{{url_for('static', filename='img/hnet.com-image.ico')}}" type="image/x-icon">
 	<link rel="icon" href="{{url_for('static', filename='img/hnet.com-image.ico')}}" type="image/x-icon">
-    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.37/dist/web3.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.37/dist/web3.min.js"></script>
+	
+
+	
 </head>
 
 <body>
@@ -497,7 +503,11 @@
 	<script src="{{url_for('static', filename='vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js')}}"></script>
 	<script src="{{url_for('static', filename='vendor/chartist/js/chartist.min.js')}}"></script>
 	<script src="{{url_for('static', filename='scripts/klorofil-common.js')}}"></script>
+	
 	<script>
+		$("#myModal").modal('show');
+
+
 	$(function() {
 		var data, options;
 
@@ -615,6 +625,7 @@
 
 	});
 	</script>
+	
 </body>
 
 </html>
