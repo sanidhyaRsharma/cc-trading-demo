@@ -24,6 +24,12 @@ Also run the following command after every pull in order to update your local de
 
 `python -m pip install -r dependencies.txt`
 
+Create `app/contract_abi.py` and paste the abi of your compiled contract's ABI as follows
+
+`abi = """ YOUR ABI HERE """`
+
+Also replace the addresses in the header of routes.py according to your testing platform
+
 ## TO-DO List
 
 - [ ] Registration page UI

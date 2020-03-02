@@ -4,84 +4,64 @@ pragma experimental ABIEncoderV2;
 contract ReceiverPays {
     address certifying_owner;
     uint256 uuid = 0;
-    struct CarbonCredit {
+    event addEvent (uint256 uuid);
+    struct CarbonCredits {
         uint256 uuid;
         address owner_addr;
         address certifying_auth_addr;
+        uint256 amount;
         uint256 ttl;
+        string certi_hash;
         bool retired;
     }
-
-    mapping(uint256 => bool) usedNonces;
-    mapping(address => uint256[]) possessedCC;
-    //mapping(uint256 => uint256[]) timemap;
-    CarbonCredit[] CCList;
-    constructor() public {
+    constructor () public{
         certifying_owner = msg.sender;
     }
-
-    function getCCListCount() public view returns (uint256) {
-        return CCList.length;
-    }
-
-    function getUUID() public view returns (uint256) {
+    mapping (address => CarbonCredits[]) holdings;
+    
+    /// addCredits to store Carbon Credits
+    function addCredits(string memory _certi_hash, address _owner_address, uint256 _amount, uint256 _ttl ) public payable returns (uint256){
+        require(msg.sender == certifying_owner);
+        incUUID();
+        holdings[_owner_address].push(CarbonCredits(uuid, _owner_address, certifying_owner, _amount, _ttl + now, _certi_hash, false));
+        emit addEvent(uuid);
         return uuid;
     }
-
-    function incUUID() public {
-        uuid++;
-    }
-
-    function getCarbonCredit(uint256 id) public view returns (CarbonCredit memory) {
-        return CCList[id];
-    }
-
-    function retireCredit(uint256 uuid) public {
-        //require(now >= );
-        CCList[uuid].retired = true;
-    }
-
-    function retireCreditList(uint256[] memory uuid_list) public {
-        for (uint i = 0; i < uuid_list.length; i++)
-            retireCredit(uuid_list[i]);
-    }
-
-    function getBalanceCount() public view returns(uint count) {
-        return possessedCC[msg.sender].length;
-    }
-
-    function getCurrentBalanceNow() public view returns (uint){
-        uint balance = 0;
-        uint len = getBalanceCount();
-        for (uint i = 0; i < len; i++) {
-            if (CCList[possessedCC[msg.sender][i]].retired == false)
-                balance += 1;
+    
+    // transferCredits to transfer Carbon Credits
+    function transferCredits(address _owner_address, address _receiver_address, uint256 _uuid, uint256 _amount) public payable {
+        require(msg.sender == _owner_address);
+        bool txDone = false;
+        for(uint256 i = 0; i < holdings[_owner_address].length; i++){
+            if(holdings[_owner_address][i].uuid == _uuid && (holdings[_owner_address][i].amount >= _amount)){
+                
+                require(holdings[_owner_address][i].retired == false);
+                CarbonCredits memory copyOfCredits = holdings[_owner_address][i];
+                holdings[_receiver_address].push(CarbonCredits(copyOfCredits.uuid, _receiver_address, copyOfCredits.certifying_auth_addr, _amount, copyOfCredits.ttl, copyOfCredits.certi_hash, copyOfCredits.retired));
+                holdings[_owner_address][i].amount -= _amount;
+                if (holdings[_owner_address][i].amount == 0){
+                    delete holdings[_owner_address][i];    
+                }
+                txDone = true;
+                break;
+            }
         }
-        return balance;
+        require(txDone== true);
     }
-
-    function addCredit(string memory verified_certificate, address owner, uint256 amount, uint256 ttl) public payable returns (uint256, uint256) {
-        require(msg.sender == certifying_owner);
-        require(amount > 0);
-        require(ttl > 0);
-        ttl = ttl + now;
-        //ttl > ttl + now);
-        int256 uuid_start = -1;
-        for (uint256 i = 0; i < amount; i++) {
-            uint256 uuid_tmp = getUUID();
-            if (uuid_start == -1)
-                uuid_start = int256(uuid_tmp);
-            CCList.push(CarbonCredit(
-                uuid_tmp,
-                owner,
-                certifying_owner,
-                ttl,
-                false
-            ));
-            possessedCC[owner].push(uuid_tmp);
-            //timemap[ttl].push(uuid_tmp);
-            incUUID();
+    
+    // retireCredits to retire Carbon Credits
+    function retireCredits(address _address) public payable{
+        for(uint256 i = 0; i< holdings[_address].length; i++){
+            if (now> holdings[_address][i].ttl)
+                holdings[_address][i].retired = true;
         }
-        return (uint256(uuid_start), ttl);
+    }
+    
+    function viewCurrentBalance(address _address) public view returns (CarbonCredits[] memory){
+        return holdings[_address];
+    }
+    
+    function incUUID() private{
+        uuid+=1;
     }
 }
