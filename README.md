@@ -23,3 +23,14 @@ Remember to update your dependencies.txt file before pushing your update in case
 Also run the following command after every pull in order to update your local dependencies
 
 `python -m pip install -r dependencies.txt`
+
+## TO-DO List
+
+- [ ] Registration page UI
+- [ ] Home page UI (Add charts and stats)
+- [ ] Prevent buying of self-owned carbon credits
+- [ ] Add functions to update JSON files which mock the databases
+- [ ] Upgrade database from JSON to a better alternative (pending discussion)
+- [ ] Buy page
+- [ ] Sell page
+- [ ] Replace addresses with usernames
