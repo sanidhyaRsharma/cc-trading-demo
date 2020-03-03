@@ -118,23 +118,27 @@ footer a {
                 web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
             }
             web3.eth.defaultAccount = web3.eth.accounts[0];
-        const abi = [
+        const abi =[
 	{
 		"constant": false,
 		"inputs": [
 			{
+				"internalType": "string",
 				"name": "_certi_hash",
 				"type": "string"
 			},
 			{
+				"internalType": "address",
 				"name": "_owner_address",
 				"type": "address"
 			},
 			{
+				"internalType": "uint256",
 				"name": "_amount",
 				"type": "uint256"
 			},
 			{
+				"internalType": "uint256",
 				"name": "_ttl",
 				"type": "uint256"
 			}
@@ -142,6 +146,7 @@ footer a {
 		"name": "addCredits",
 		"outputs": [
 			{
+				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
 			}
@@ -154,6 +159,7 @@ footer a {
 		"constant": false,
 		"inputs": [
 			{
+				"internalType": "address",
 				"name": "_address",
 				"type": "address"
 			}
@@ -168,18 +174,22 @@ footer a {
 		"constant": false,
 		"inputs": [
 			{
+				"internalType": "address",
 				"name": "_owner_address",
 				"type": "address"
 			},
 			{
+				"internalType": "address",
 				"name": "_receiver_address",
 				"type": "address"
 			},
 			{
+				"internalType": "uint256",
 				"name": "_uuid",
 				"type": "uint256"
 			},
 			{
+				"internalType": "uint256",
 				"name": "_amount",
 				"type": "uint256"
 			}
@@ -200,6 +210,7 @@ footer a {
 		"constant": true,
 		"inputs": [
 			{
+				"internalType": "address",
 				"name": "_address",
 				"type": "address"
 			}
@@ -209,34 +220,42 @@ footer a {
 			{
 				"components": [
 					{
+						"internalType": "uint256",
 						"name": "uuid",
 						"type": "uint256"
 					},
 					{
+						"internalType": "address",
 						"name": "owner_addr",
 						"type": "address"
 					},
 					{
+						"internalType": "address",
 						"name": "certifying_auth_addr",
 						"type": "address"
 					},
 					{
+						"internalType": "uint256",
 						"name": "amount",
 						"type": "uint256"
 					},
 					{
+						"internalType": "uint256",
 						"name": "ttl",
 						"type": "uint256"
 					},
 					{
+						"internalType": "string",
 						"name": "certi_hash",
 						"type": "string"
 					},
 					{
+						"internalType": "bool",
 						"name": "retired",
 						"type": "bool"
 					}
 				],
+				"internalType": "struct ReceiverPays.CarbonCredits[]",
 				"name": "",
 				"type": "tuple[]"
 			}
@@ -245,8 +264,7 @@ footer a {
 		"stateMutability": "view",
 		"type": "function"
 	}
-]
-        myContract = new web3.eth.Contract(abi, address);
+]myContract = new web3.eth.Contract(abi, address);
         console.log(myContract);
         });
         function accept(i, owner_address, recv_address, uuid, amount){
@@ -263,6 +281,7 @@ footer a {
             if (err) {
                 console.log(err);
                 alert("Permission Denied");
+				window.location.reload();
             }
             else
                 alert("Record added Successfully !!");

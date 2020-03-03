@@ -225,6 +225,7 @@ def accept():
         else:
             data_store[current_obj['receiver-wallet-address']] = [(data_store[current_obj['wallet-address']][idx])]
         data_store[current_obj['wallet-address']].pop(idx)
+        return redirect(url_for('requests'))
     return redirect(url_for('requests'))
 
 @app.route('/reject', methods=['GET','POST'])
