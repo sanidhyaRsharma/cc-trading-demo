@@ -15,12 +15,11 @@ CONTRACT_ADDR = '0x310395b261bE5890d39c367596755096D0d9C40D'
 WALLET_PRIVATE_KEY = 'a70e3d51a27e7ac3de666b2ed1d3e729173ad1a99748a797cbb2e13ad639e065'
 WALLET_ADDRESS = '0xDaB3Cb092B664931ffCC74b7DFc5A44b01cD3F30'
 
-w3 = Web3(HTTPProvider('http://127.0.0.1:8545'))
+w3 = Web3(HTTPProvider('http://localhost:8545'))
 # w3.eth.enable_unaudited_features()
 contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
 data_store = {}
-
 
 user_store = {"company1@gmail.com": {'password': '12345', 'wallet_address':'0x8D031d67D5e904640994D3D541A70836c88dB3C3'},
               "un@unfdccc.com": {'password': 'qwerty', 'wallet_address': '0xDaB3Cb092B664931ffCC74b7DFc5A44b01cD3F30'},
@@ -36,7 +35,6 @@ purchase_request_store={}
 
 def addCredit(certificate, owner, amount, ttl):
     print("Inside addCredit")
-    #print(w3.eth.chainId)
     nonce = w3.eth.getTransactionCount(WALLET_ADDRESS)
     txn_dict =contract.functions.addCredits(certificate, w3.toChecksumAddress(owner), int(amount), int(ttl)).buildTransaction({
         'nonce':nonce
@@ -58,9 +56,9 @@ def addCredit(certificate, owner, amount, ttl):
 
     if tx_receipt is None:
         return False, -1
-    uuid = int(tx_receipt['logs'][0]['data'], 16)
-    print(uuid)
-    return True, uuid
+    #uuid = int(tx_receipt['logs'][0]['data'], 16)
+    #print(uuid)
+    return True, 0
 
 def generate_hash(data):
     return SHA256.new(data).hexdigest()
@@ -140,7 +138,6 @@ def send_request():
 @login_required
 def sell():
     if user_store[Session['username']]['wallet_address'] != WALLET_ADDRESS:
-
         return """
             <h3>Access Denied</h3>
         """
@@ -159,8 +156,8 @@ def sell():
 
 
         save_dir = os.path.join(os.getcwd(), 'xyz.pdf')
-        print(save_dir)
-        print(request.files['certificate'].save(save_dir))
+        #print(save_dir)
+        #print(request.files['certificate'].save(save_dir))
         # put certificate string in payload
 
 
