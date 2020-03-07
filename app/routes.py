@@ -118,7 +118,7 @@ def profile():
 @app.route('/buy')
 @login_required
 def buy():
-    # sellers=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
+    ##sellers=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
     return render_template('buy.html',sellers=data_store, buyer=user_store[Session['username']], session=Session)
 
 @app.route('/send-request',methods=['GET', 'POST'])
