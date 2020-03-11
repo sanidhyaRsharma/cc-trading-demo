@@ -1,29 +1,93 @@
 {% extends "base.html" %}
-
 {% block content %}
     <h1>Carbon Credit Exchange</h1>
     <br>
     <p>{{notif}}</p>
-        {% for seller in ds.keys()%}
-            {% for item in ds[seller] %}
-            <div class="row">
-            <div class="col-md-8">
-                
-                <div class="panel">
-                <div class="panel-heading">
-                    <h3 class="panel-title">{{seller}}</h3>
-                    <div class="right">
-                        <!-- <button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button> -->
-                        <button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
-                    </div>
+    {%if notif==""%}
+    {%else%}
+    {% if notif=="Certificate added to blockchain" %}
+     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-notify modal-success" role="document">
+    <!--Content-->
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header">
+        
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true" class="white-text">&times;</span>
+        </button>
+      </div>
 
-                </div>
-                <div class="panel-body">
-                    <p> No.of carbon credits= {{item['amount']}}
-                </div>
+      <!--Body-->
+      <div class="modal-body">
+        <div class="text-center">
+            <i class="fa fa-check-square-o" style="font-size:48px;color:green"></i>
+          <p>Your Certificate was successfully added to the blockchain</p>
+        </div>
+      </div>
+
+      <!--Footer-->
+      <div class="modal-footer justify-content-center">
+        <a type="button" class="btn btn-success" data-dismiss="modal">Close<i class="far fa-gem ml-1 white-text"></i></a>
+      </div>
+    </div>
+    <!--/.Content-->
+  </div>
+  </div>
+
+  {% for seller in ds.keys()%}
+  {% for item in ds[seller] %}
+  <div class="row">
+  <div class="col-md-8">
+      <div class="panel">
+      <div class="panel-heading">
+          <h3 class="panel-title">{{seller}}</h3>
+          <div class="right">
+              <!-- <button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button> -->
+              <button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
+          </div>
+      </div>
+      <div class="panel-body">
+          <p> No.of carbon credits= {{item['amount']}}
+      </div>
+  </div>
+  </div>
+  </div>
+  {% endfor %}
+{% endfor %}
+    {% else %}
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-notify modal-success" role="document">
+        <!--Content-->
+        <div class="modal-content">
+          <!--Header-->
+          <div class="modal-header">
+            
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true" class="white-text">&times;</span>
+            </button>
+          </div>
+    
+          <!--Body-->
+          <div class="modal-body">
+            <div class="text-center">
+                <i class="fa fa-times-circle-o" style="font-size:48px;color:red"></i>
+              <p>There was a problem while adding your Certificate to the blockchain</p>
             </div>
-            </div>
-            </div>
-            {% endfor %}
-        {% endfor %}
+          </div>
+    
+          <!--Footer-->
+          <div class="modal-footer justify-content-center">
+            <a type="button" class="btn btn-danger" data-dismiss="modal">Close<i class="far fa-gem ml-1 white-text"></i></a>
+          </div>
+        </div>
+        <!--/.Content-->
+      </div>
+      </div>
+    {% endif%}
+    {%endif%}
 {% endblock %}
+
+
+
+

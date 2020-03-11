@@ -11,18 +11,18 @@ Session = {}
 '''
     Details of certifying auth
 '''
-CONTRACT_ADDR = '0x091590dE64a68dC63502d9f674552ba00867D4a1'
-WALLET_PRIVATE_KEY = '9c0a71e91e49c55a9bc537e5a61b015fc82c7fa4616b6daeb42d442933805349'
-WALLET_ADDRESS = '0x33D6F007E249C1e6dfA0F23E0fDa9db8c0DbA3C0'
+CONTRACT_ADDR = '0x310395b261bE5890d39c367596755096D0d9C40D'
+WALLET_PRIVATE_KEY = 'a70e3d51a27e7ac3de666b2ed1d3e729173ad1a99748a797cbb2e13ad639e065'
+WALLET_ADDRESS = '0xDaB3Cb092B664931ffCC74b7DFc5A44b01cD3F30'
 
-w3 = Web3(HTTPProvider('http://localhost:7545'))
+w3 = Web3(HTTPProvider('http://localhost:8545'))
 # w3.eth.enable_unaudited_features()
 contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
 data_store = {}
 
-user_store = {"company1@gmail.com": {'password': '12345', 'wallet_address':'0xe4D1E737a1D734F37Ec734D62791486f6EaaF469'},
-              "un@unfdccc.com": {'password': 'qwerty', 'wallet_address': '0x33D6F007E249C1e6dfA0F23E0fDa9db8c0DbA3C0'},
+user_store = {"company1@gmail.com": {'password': '12345', 'wallet_address':'0x8D031d67D5e904640994D3D541A70836c88dB3C3'},
+              "un@unfdccc.com": {'password': 'qwerty', 'wallet_address': '0xDaB3Cb092B664931ffCC74b7DFc5A44b01cD3F30'},
               "company2@gmail.com": {'password': '12345', 'wallet_address':'0x296a34459D0B38D1ec759b31a5DdBd118D64978b'}}
 
 with open('user_store.json', 'w') as filep:
@@ -56,9 +56,9 @@ def addCredit(certificate, owner, amount, ttl):
 
     if tx_receipt is None:
         return False, -1
-    uuid = int(tx_receipt['logs'][0]['data'], 16)
-    print(uuid)
-    return True, uuid
+    #uuid = int(tx_receipt['logs'][0]['data'], 16)
+    #print(uuid)
+    return True, 0
 
 def generate_hash(data):
     return SHA256.new(data).hexdigest()
@@ -118,7 +118,7 @@ def profile():
 @app.route('/buy')
 @login_required
 def buy():
-    # sellers=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
+    ##sellers=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
     return render_template('buy.html',sellers=data_store, buyer=user_store[Session['username']], session=Session)
 
 @app.route('/send-request',methods=['GET', 'POST'])
@@ -156,8 +156,8 @@ def sell():
 
 
         save_dir = os.path.join(os.getcwd(), 'xyz.pdf')
-        print(save_dir)
-        print(request.files['certificate'].save(save_dir))
+        #print(save_dir)
+        #print(request.files['certificate'].save(save_dir))
         # put certificate string in payload
 
 

@@ -115,10 +115,10 @@ footer a {
                 web3 = new Web3(web3.currentProvider);
             }
             else{
-                web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+                web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
             }
             web3.eth.defaultAccount = web3.eth.accounts[0];
-        const abi = [
+        const abi =[
 	{
 		"constant": false,
 		"inputs": [
@@ -207,19 +207,6 @@ footer a {
 		"type": "constructor"
 	},
 	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "uuid",
-				"type": "uint256"
-			}
-		],
-		"name": "addEvent",
-		"type": "event"
-	},
-	{
 		"constant": true,
 		"inputs": [
 			{
@@ -277,10 +264,7 @@ footer a {
 		"stateMutability": "view",
 		"type": "function"
 	}
-]
-        const address = "0x091590dE64a68dC63502d9f674552ba00867D4a1";
-
-        myContract = new web3.eth.Contract(abi, address);
+]myContract = new web3.eth.Contract(abi, address);
         console.log(myContract);
         });
         function accept(i, owner_address, recv_address, uuid, amount){
