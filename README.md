@@ -30,6 +30,8 @@ Create `app/contract_abi.py` and paste the abi of your compiled contract's ABI a
 
 Also replace the addresses in the header of routes.py according to your testing platform
 
+Change the abi and port in `app/templates/requests.html`
+
 ## TO-DO List
 
 - [ ] Registration page UI
