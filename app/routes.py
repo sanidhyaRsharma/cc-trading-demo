@@ -235,13 +235,15 @@ def reject():
         print(current_obj)
     return redirect(url_for('requests'))
 
+# helper function used to convert wallet address to a username
 def address_to_username(_address):
     for username in user_store.keys():
         if _address == user_store[username]['wallet_address']:
             return username
     return 'NONE'
  
-@app.route('/transaction_history', methods=['GET','POST'])
+# global transaction history 
+@app.route('/transaction_history')
 def transaction_history():
     transaction_history = {}
     internal_dict = {}
@@ -260,3 +262,32 @@ def transaction_history():
         transaction_history[i] = internal_dict
     
     return render_template('transaction-history.html', transaction = transaction_history)
+ 
+# transaction history of a particular user
+@app.route('/user_transaction_history')
+@login_required
+def user_transaction_history():
+    user_transaction_history = {}
+    user_internal_dict = {}
+    current_user = user_store[Session['username']]['wallet_address']
+ 
+    latest_block_number = w3.eth.blockNumber
+    # block number starts with 1
+    for i in range(1, latest_block_number + 1):
+        transaction_count = w3.eth.getBlockTransactionCount(i)
+        for j in range(0, transaction_count):
+            if  w3.eth.getTransactionByBlock(i, j)['to'] == current_user or  w3.eth.getTransactionByBlock(i, j)['from'] == current_user:
+                user_internal_dict = {}
+                user_internal_dict['to'] = w3.eth.getTransactionByBlock(i, j)['to']
+                user_internal_dict['to_username'] = address_to_username(user_internal_dict['to'])
+                user_internal_dict['from'] = w3.eth.getTransactionByBlock(i, j)['from']
+                user_internal_dict['from_username'] = address_to_username(user_internal_dict['from'])
+                user_internal_dict['hash'] = (w3.eth.getTransactionByBlock(i, j)['hash']).hex()
+            user_transaction_history[i] = user_internal_dict
+         
+    return render_template('transaction-history.html', transaction = user_transaction_history)
+ 
+@login_required
+def go_to_user_history():
+    return redirect(url_for('user_transaction_history'))
+
