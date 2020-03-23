@@ -234,3 +234,29 @@ def reject():
         current_obj = purchase_request_store[user_store[Session['username']]['wallet_address']].pop(int(data['i']))
         print(current_obj)
     return redirect(url_for('requests'))
+
+def address_to_username(_address):
+    for username in user_store.keys():
+        if _address == user_store[username]['wallet_address']:
+            return username
+    return 'NONE'
+ 
+@app.route('/transaction_history', methods=['GET','POST'])
+def transaction_history():
+    transaction_history = {}
+    internal_dict = {}
+ 
+    latest_block_number = w3.eth.blockNumber
+    # block number starts with 1
+    for i in range(1, latest_block_number + 1):
+        transaction_count = w3.eth.getBlockTransactionCount(i)
+        for j in range(0, transaction_count):
+            internal_dict = {}
+            internal_dict['to'] = w3.eth.getTransactionByBlock(i, j)['to']
+            internal_dict['to_username'] = address_to_username(internal_dict['to'])
+            internal_dict['from'] = w3.eth.getTransactionByBlock(i, j)['from']
+            internal_dict['from_username'] = address_to_username(internal_dict['from'])
+            internal_dict['hash'] = (w3.eth.getTransactionByBlock(i, j)['hash']).hex()
+        transaction_history[i] = internal_dict
+    
+    return render_template('transaction-history.html', transaction = transaction_history)
