@@ -1,0 +1,17 @@
+{% extends "base.html"%}
+{% block content %}
+{% for key in transaction.keys()%}
+<div class="row">
+<div class="col-md-8">
+    <div class="panel">
+    
+    <div class="panel-body">
+        <div><b>TX HASH:</b> {{transaction[key]['hash']}}</div>
+        <div><b>TO USER:</b> {{transaction[key]['to_username']}}</div>
+        <div><b>FROM USER:</b> {{transaction[key]['from_username']}}</div>
+    </div>
+</div>
+</div>
+</div>
+{% endfor %}
+{%endblock%}
