@@ -33,7 +33,7 @@ with open('user_store.json', 'r') as filep:
 
 purchase_request_store={}
 
-def addCredit(certificate, owner, amount, ttl):
+def addCredits(certificate, owner, amount, ttl):
     print("Inside addCredit")
     nonce = w3.eth.getTransactionCount(WALLET_ADDRESS)
     txn_dict =contract.functions.addCredits(certificate, w3.toChecksumAddress(owner), int(amount), int(ttl)).buildTransaction({
@@ -176,7 +176,7 @@ def sell():
                 print(type(signed_doc_str))
                 signed_doc_hash = generate_hash(signed_doc_str)
                 print(signed_doc_hash)
-                result, uuid= addCredit(signed_doc_hash, addr, payload['amount'], int(payload['time_period'])*30*86400)
+                result, uuid= addCredits(signed_doc_hash, addr, payload['amount'], int(payload['time_period'])*30*86400)
                 print("CHECK", result, uuid)
                 if (result):
                     payload['uuid'] = uuid
