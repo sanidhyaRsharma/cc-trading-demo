@@ -11,9 +11,9 @@ Session = {}
 '''
     Details of certifying auth
 '''
-CONTRACT_ADDR = '0x310395b261bE5890d39c367596755096D0d9C40D'
-WALLET_PRIVATE_KEY = 'a70e3d51a27e7ac3de666b2ed1d3e729173ad1a99748a797cbb2e13ad639e065'
-WALLET_ADDRESS = '0xDaB3Cb092B664931ffCC74b7DFc5A44b01cD3F30'
+CONTRACT_ADDR = '0x097A0aEB3e664F19b7484b2bd1729993594A77b1'
+WALLET_PRIVATE_KEY = '066bf1c0a608d7dd0e796b3ae5b82037f6da5f4efb61a501760df7e8322e7395'
+WALLET_ADDRESS = '0x86cF723AdD54A7BaB8099088A21E467Fe27b59c8'
 
 w3 = Web3(HTTPProvider('http://localhost:8545'))
 # w3.eth.enable_unaudited_features()
@@ -21,9 +21,9 @@ contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
 data_store = {}
 
-user_store = {"company1@gmail.com": {'password': '12345', 'wallet_address':'0x8D031d67D5e904640994D3D541A70836c88dB3C3'},
-              "un@unfdccc.com": {'password': 'qwerty', 'wallet_address': '0xDaB3Cb092B664931ffCC74b7DFc5A44b01cD3F30'},
-              "company2@gmail.com": {'password': '12345', 'wallet_address':'0x296a34459D0B38D1ec759b31a5DdBd118D64978b'}}
+user_store = {"company1@gmail.com": {'password': '12345', 'wallet_address':'0x6d3b117832e85fF84Ea7338Ef1589181ec934faA'},
+              "un@unfdccc.com": {'password': 'qwerty', 'wallet_address': '0x86cF723AdD54A7BaB8099088A21E467Fe27b59c8'},
+              "company2@gmail.com": {'password': '12345', 'wallet_address':'0x350FE259d37a62920f85141D808AbC4b078cC3fd'}}
 
 with open('user_store.json', 'w') as filep:
     json.dump(user_store, filep)
@@ -119,7 +119,15 @@ def profile():
 @login_required
 def buy():
     ##sellers=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
-    return render_template('buy.html',sellers=data_store, buyer=user_store[Session['username']], session=Session)
+    # Prevent buying of self-owned carbon credits
+    internal_dict = {}
+    seller_dict = {}
+    for key in data_store.keys():
+        if key != user_store[Session['username']]['wallet_address']:
+            internal_dict = data_store[key]
+            seller_dict[key] = internal_dict
+
+    return render_template('buy.html',sellers=seller_dict, buyer=user_store[Session['username']], session=Session)
 
 @app.route('/send-request',methods=['GET', 'POST'])
 @login_required
