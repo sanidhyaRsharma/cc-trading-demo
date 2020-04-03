@@ -1,6 +1,25 @@
 abi="""
 [
 	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "uuid",
+				"type": "uint256"
+			}
+		],
+		"name": "addEvent",
+		"type": "event"
+	},
+	{
 		"constant": false,
 		"inputs": [
 			{
@@ -80,12 +99,6 @@ abi="""
 		"payable": true,
 		"stateMutability": "payable",
 		"type": "function"
-	},
-	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
 	},
 	{
 		"constant": true,
