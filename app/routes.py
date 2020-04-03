@@ -190,8 +190,15 @@ def sell():
 @login_required
 def requests():
     # requests=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
-    requests = purchase_request_store[user_store[Session['username']]['wallet_address']]
-    print(requests)
+    requests = []
+    key = user_store[Session['username']]['wallet_address']
+ 
+    if key not in purchase_request_store.keys():
+        print('No pending requests')
+    else: 
+        requests = purchase_request_store[user_store[Session['username']]['wallet_address']]
+        print(requests)
+        print(len(requests))
     return render_template('requests.html',len=len(requests),requests=requests, session=Session)
 
 @app.route('/logout')
@@ -247,6 +254,7 @@ def address_to_username(_address):
 def transaction_history():
     transaction_history = {}
     internal_dict = {}
+    count = 0
  
     latest_block_number = w3.eth.blockNumber
     # block number starts with 1
@@ -259,7 +267,8 @@ def transaction_history():
             internal_dict['from'] = w3.eth.getTransactionByBlock(i, j)['from']
             internal_dict['from_username'] = address_to_username(internal_dict['from'])
             internal_dict['hash'] = (w3.eth.getTransactionByBlock(i, j)['hash']).hex()
-        transaction_history[i] = internal_dict
+            count = count + 1
+            transaction_history[count] = internal_dict
     
     return render_template('transaction-history.html', transaction = transaction_history)
  
@@ -270,6 +279,7 @@ def user_transaction_history():
     user_transaction_history = {}
     user_internal_dict = {}
     current_user = user_store[Session['username']]['wallet_address']
+    count = 0
  
     latest_block_number = w3.eth.blockNumber
     # block number starts with 1
@@ -283,11 +293,18 @@ def user_transaction_history():
                 user_internal_dict['from'] = w3.eth.getTransactionByBlock(i, j)['from']
                 user_internal_dict['from_username'] = address_to_username(user_internal_dict['from'])
                 user_internal_dict['hash'] = (w3.eth.getTransactionByBlock(i, j)['hash']).hex()
-            user_transaction_history[i] = user_internal_dict
-         
-    return render_template('transaction-history.html', transaction = user_transaction_history)
+                # change made here
+                count = count + 1
+                user_transaction_history[count] = user_internal_dict
+ 
+    # no transaction made or received by user
+    if user_transaction_history == {}:
+        return render_template('blank-transaction-history.html')
+    else:
+        return render_template('transaction-history.html', transaction = user_transaction_history)
  
 @login_required
 def go_to_user_history():
     return redirect(url_for('user_transaction_history'))
+
 
