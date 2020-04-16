@@ -11,32 +11,50 @@ Session = {}
 '''
     Details of certifying auth
 '''
-CONTRACT_ADDR = '0x097A0aEB3e664F19b7484b2bd1729993594A77b1'
+CONTRACT_ADDR = '0x3836b4bDe418C1Fb63c9b38F1c5AfB294098c58a'
 WALLET_PRIVATE_KEY = '066bf1c0a608d7dd0e796b3ae5b82037f6da5f4efb61a501760df7e8322e7395'
 WALLET_ADDRESS = '0x86cF723AdD54A7BaB8099088A21E467Fe27b59c8'
 
-w3 = Web3(HTTPProvider('http://localhost:8545'))
+w3 = Web3(HTTPProvider('http://localhost:7545'))
 # w3.eth.enable_unaudited_features()
 contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
 data_store = {}
+purchase_request_store={}
 
 user_store = {"company1@gmail.com": {'password': '12345', 'wallet_address':'0x6d3b117832e85fF84Ea7338Ef1589181ec934faA'},
               "un@unfdccc.com": {'password': 'qwerty', 'wallet_address': '0x86cF723AdD54A7BaB8099088A21E467Fe27b59c8'},
               "company2@gmail.com": {'password': '12345', 'wallet_address':'0x350FE259d37a62920f85141D808AbC4b078cC3fd'}}
 
+'''
 with open('user_store.json', 'w') as filep:
     json.dump(user_store, filep)
 
 with open('user_store.json', 'r') as filep:
     user_store = json.load(filep)
+'''
 
-purchase_request_store={}
+def initialize_file(file_name):
+    filesize = os.path.getsize(file_name)
+
+    if filesize == 0:
+        return {}
+    else: 
+        with open(file_name, 'r') as filep:
+            return json.load(filep)
+
+def update_file(file_name, variable):
+    with open(file_name, 'w') as filep:
+        json.dump(variable, filep)
+
+user_store = initialize_file('user_store.json')
+data_store = initialize_file('data_store.json')
+purchase_request_store = initialize_file('purchase_request_store.json')
 
 def addCredit(certificate, owner, amount, ttl):
     print("Inside addCredit")
     nonce = w3.eth.getTransactionCount(WALLET_ADDRESS)
-    txn_dict =contract.functions.addCredits(certificate, w3.toChecksumAddress(owner), int(amount), int(ttl)).buildTransaction({
+    txn_dict =contract.functions.addCredit(certificate, w3.toChecksumAddress(owner), int(amount), int(ttl)).buildTransaction({
         'nonce':nonce
     })
     # event_filter = contract.events.
@@ -81,8 +99,10 @@ def register():
         wallet_address = request.form.get('wallet-address')
         user_store[username] = {'password':password, 'wallet_address':wallet_address}
         print(user_store)
-        with open('user_store.json', 'w') as filep:
-            json.dump(user_store, filep)
+        # CHANGE THIS !!!
+        update_file('user_store.json', user_store)
+        #with open('user_store.json', 'w') as filep:
+        #    json.dump(user_store, filep)
         return redirect(url_for('index'))
     return render_template('register.html')
 
@@ -115,6 +135,7 @@ def index():
 def profile():
     return render_template('page-profile.html', username = Session['username'], wallet_address=user_store[Session['username']]['wallet_address'])
 
+# CHANGES MADE HERE - 26th March 2020
 @app.route('/buy')
 @login_required
 def buy():
@@ -138,6 +159,9 @@ def send_request():
             purchase_request_store[seller_data['wallet-address']].append(seller_data)
         else:
             purchase_request_store[seller_data['wallet-address']] = [seller_data]
+
+        # CHANGE THIS -> update made to purchase_request_store !!!
+        update_file('purchase_request_store.json', purchase_request_store)    
         return redirect(url_for('index'))
     return render_template('send-request.html',data=seller_data, session=Session)
     
@@ -184,6 +208,8 @@ def sell():
                         data_store[addr].append(payload)
                     else:
                         data_store[addr] = [payload]
+                    # CHANGE THIS -> update made to data_store !!!
+                    update_file('data_store.json', data_store)
                     return render_template("index.html", notif = "Certificate added to blockchain", ds = data_store)
                 else:
                     return render_template("index.html", notif = "Failed!2", ds= data_store)
@@ -208,6 +234,7 @@ def requests():
         print(requests)
         print(len(requests))
     return render_template('requests.html',len=len(requests),requests=requests, session=Session)
+
 
 @app.route('/logout')
 @login_required
@@ -237,6 +264,9 @@ def accept():
         else:
             data_store[current_obj['receiver-wallet-address']] = [(data_store[current_obj['wallet-address']][idx])]
         data_store[current_obj['wallet-address']].pop(idx)
+
+        # CHANGE THIS -> data_store update made here !!!
+        update_file('data_store.json', data_store)
         return redirect(url_for('requests'))
     return redirect(url_for('requests'))
 
@@ -314,5 +344,3 @@ def user_transaction_history():
 @login_required
 def go_to_user_history():
     return redirect(url_for('user_transaction_history'))
-
-
