@@ -264,7 +264,9 @@ footer a {
 		"stateMutability": "view",
 		"type": "function"
 	}
-]myContract = new web3.eth.Contract(abi, address);
+];
+const addr ="0x091590dE64a68dC63502d9f674552ba00867D4a1";
+myContract = new web3.eth.Contract(abi, addr);
         console.log(myContract);
         });
         function accept(i, owner_address, recv_address, uuid, amount){
@@ -276,7 +278,7 @@ footer a {
             //     }
             //     const account = accounts[0];
             //     console.log(account)
-            
+            console.log(owner_address + '\n' + recv_address + '\n' + uuid + '\n' + amount + '\n');
             myContract.methods.transferCredits(owner_address, recv_address, uuid, amount).send({ from: owner_address }, function (err, res) {
             if (err) {
                 console.log(err);

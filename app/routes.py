@@ -6,14 +6,8 @@ from .contract_abi import abi
 from web3 import Web3, HTTPProvider
 from Crypto.Hash import SHA256
 import os, json
-
+from .config import *
 Session = {}
-'''
-    Details of certifying auth
-'''
-CONTRACT_ADDR = '0x097A0aEB3e664F19b7484b2bd1729993594A77b1'
-WALLET_PRIVATE_KEY = '066bf1c0a608d7dd0e796b3ae5b82037f6da5f4efb61a501760df7e8322e7395'
-WALLET_ADDRESS = '0x86cF723AdD54A7BaB8099088A21E467Fe27b59c8'
 
 w3 = Web3(HTTPProvider('http://localhost:8545'))
 # w3.eth.enable_unaudited_features()
@@ -21,12 +15,10 @@ contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
 data_store = {}
 
-user_store = {"company1@gmail.com": {'password': '12345', 'wallet_address':'0x6d3b117832e85fF84Ea7338Ef1589181ec934faA'},
-              "un@unfdccc.com": {'password': 'qwerty', 'wallet_address': '0x86cF723AdD54A7BaB8099088A21E467Fe27b59c8'},
-              "company2@gmail.com": {'password': '12345', 'wallet_address':'0x350FE259d37a62920f85141D808AbC4b078cC3fd'}}
+user_store = {}
 
-with open('user_store.json', 'w') as filep:
-    json.dump(user_store, filep)
+# with open('user_store.json', 'w') as filep:
+#     json.dump(user_store, filep)
 
 with open('user_store.json', 'r') as filep:
     user_store = json.load(filep)
@@ -56,9 +48,9 @@ def addCredits(certificate, owner, amount, ttl):
 
     if tx_receipt is None:
         return False, -1
-    #uuid = int(tx_receipt['logs'][0]['data'], 16)
-    #print(uuid)
-    return True, 0
+    uuid = int(tx_receipt['logs'][0]['data'], 16)
+    print(uuid)
+    return True, uuid
 
 def generate_hash(data):
     return SHA256.new(data).hexdigest()

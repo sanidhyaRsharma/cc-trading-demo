@@ -7,3 +7,5 @@ __pycache__/
 backup phrase
 app/static/node_modules/
 app/contract_abi.py
+app/config.py
+user_store.json
