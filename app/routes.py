@@ -50,7 +50,7 @@ purchase_request_store = initialize_file('purchase_request_store.json')
 def addCredits(certificate, owner, amount, ttl):
     print("Inside addCredit")
     nonce = w3.eth.getTransactionCount(WALLET_ADDRESS)
-    txn_dict =contract.functions.addCredit(certificate, w3.toChecksumAddress(owner), int(amount), int(ttl)).buildTransaction({
+    txn_dict =contract.functions.addCredits(certificate, w3.toChecksumAddress(owner), int(amount), int(ttl)).buildTransaction({
         'nonce':nonce
     })
     # event_filter = contract.events.
