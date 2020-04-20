@@ -17,11 +17,12 @@ WALLET_ADDRESS = '0xDaB3Cb092B664931ffCC74b7DFc5A44b01cD3F30'
 
 w3 = Web3(HTTPProvider('http://localhost:8545'))
 # w3.eth.enable_unaudited_features()
+
 contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
 data_store = {}
 
-user_store = {"company1@gmail.com": {'password': '12345', 'wallet_address':'0x8D031d67D5e904640994D3D541A70836c88dB3C3'},
+user_store = {"company1@gmail.com": {'password': '12345', 'wallet_address':'0x864177C32b10a9f3427D6eF4f31e3d8617B7fF44'},
               "un@unfdccc.com": {'password': 'qwerty', 'wallet_address': '0xDaB3Cb092B664931ffCC74b7DFc5A44b01cD3F30'},
               "company2@gmail.com": {'password': '12345', 'wallet_address':'0x296a34459D0B38D1ec759b31a5DdBd118D64978b'}}
 
@@ -124,12 +125,17 @@ def buy():
 @app.route('/send-request',methods=['GET', 'POST'])
 @login_required
 def send_request():
+    print("send-request aaya")
     if request.method =='POST':
         seller_data = request.form.to_dict()
         if seller_data['wallet-address'] in purchase_request_store.keys():
+            print("if mai aaya")
             purchase_request_store[seller_data['wallet-address']].append(seller_data)
         else:
+            print("else mai aaya")
             purchase_request_store[seller_data['wallet-address']] = [seller_data]
+        print("purchase_request_store_data")
+        print(purchase_request_store)
         return redirect(url_for('index'))
     return render_template('send-request.html',data=seller_data, session=Session)
     
@@ -190,6 +196,7 @@ def sell():
 @login_required
 def requests():
     # requests=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
+    print("purchase_request_store",purchase_request_store)
     requests = purchase_request_store[user_store[Session['username']]['wallet_address']]
     print(requests)
     return render_template('requests.html',len=len(requests),requests=requests, session=Session)

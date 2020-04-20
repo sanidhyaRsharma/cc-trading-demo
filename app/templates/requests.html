@@ -111,6 +111,16 @@ footer a {
     </div>
     <script>
         window.addEventListener('load', async () => {
+			if (window.ethereum) {
+      window.web3 = new Web3(window.ethereum)
+      await window.ethereum.enable()
+    }
+    else if (window.web3) {
+      window.web3 = new Web3(window.web3.currentProvider)
+    }
+    else {
+      window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
+    }
             if(typeof web3 !== 'undefined') {
                 web3 = new Web3(web3.currentProvider);
             }
@@ -118,6 +128,7 @@ footer a {
                 web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
             }
             web3.eth.defaultAccount = web3.eth.accounts[0];
+			console.log("account"+web3.eth.defaultAccount)
         const abi =[
 	{
 		"constant": false,
@@ -264,10 +275,15 @@ footer a {
 		"stateMutability": "view",
 		"type": "function"
 	}
-]myContract = new web3.eth.Contract(abi, address);
-        console.log(myContract);
+]
+console.log("helo")
+const address="0x310395b261bE5890d39c367596755096D0d9C40D";
+	myContract = new web3.eth.Contract(abi, address);
+        console.log("contract="+myContract);
         });
         function accept(i, owner_address, recv_address, uuid, amount){
+			console.log("owner_address="+owner_address);
+			console.log("recv_address="+recv_address);
             // TODO Call transfer credits to write transaction to blockchain
 
             // web3.eth.getAccounts(function(error, accounts) {
