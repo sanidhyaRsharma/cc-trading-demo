@@ -6,27 +6,27 @@
             <form action="" method="POST" enctype=multipart/form-data>
                 <div class="form-group">
                     <label for="title">Title of project:</label>
-                    <input type="text" class="form-control" id="title" name="title" placeholder="Eg. 60 MW Solar PV - Monte Plaza">
+                    <input type="text" class="form-control" id="title" name="title" placeholder="Eg. 60 MW Solar PV - Monte Plaza" required>
                 </div>
                 <div class="form-group">
                     <label for="ref-num">UNFCCC reference number of project activity:</label>
-                    <input type="text" class="form-control" id="ref-num" name="ref-num" placeholder="Eg. 00000">
+                    <input type="text" class="form-control" id="ref-num" name="ref-num" placeholder="Eg. 00000" required>
                 </div>
                 <div class="form-group">
                     <label for="carbon-credits">Certified amount of GHG emission reductions or GHG removals for this monitoring period:</label>
-                    <input type="number" id="carbon-credits" name="amount" placeholder="Amount in tCO2e" class="form-control">
+                    <input type="number" id="carbon-credits" name="amount" placeholder="Amount in tCO2e" class="form-control" min="1" required>
                 </div>
                 <div class="form-group">
                     <label for="time-period">Period of validity:</label>
-                    <input type="number" class="form-control" id="time-period" name="time-period" placeholder="Time in number of months">
+                    <input type="number" class="form-control" id="time-period" name="time-period" placeholder="Time in number of months" min="1" required>
                 </div>
                 <div class="form-group">
                     <label for="wallet-address">Address of owner</label>
-                    <input type="text" class="form-control" id="wallet-address" name="wallet-address" placeholder="Address">
+                    <input type="text" class="form-control" id="wallet-address" name="wallet-address" placeholder="Address" pattern="0x[a-zA-z0-9]+" minlength="42" maxlength="42" required>
                 </div>
                 <div class="custom-file">
                     <label class="custom-file-label" for="custom-file">Upload signed certificate</label>
-                    <input type="file" class="custom-file-input" id="custom-file" name="certificate" >
+                    <input type="file" class="custom-file-input" id="custom-file" name="certificate" required>
                 </div>
                 <br/>
                 <button type="submit" id="saveButton" class="btn btn-primary"> Submit </button>
