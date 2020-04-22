@@ -99,7 +99,7 @@ footer a {
                                 <!-- <td >124,90 €</td> -->
                                 <td >
                                     <button class="btn btn-sm btn-success" onclick="accept('{{i}}','{{requests[i]['wallet-address']}}', '{{requests[i]['receiver-wallet-address']}}','{{requests[i]['uuid']}}','{{requests[i]['amount']}}')"><i class="fa fa-check-circle"></i></i> </button>
-                                    <button class="btn btn-sm btn-danger"  onclick="reject('{{i}}')"><i class="fa fa-trash"></i> </button> 
+                                    <button class="btn btn-sm btn-danger" type="button" onclick="window.location.href='{{url_for('reject', index = i)}}';"><i class="fa fa-trash"></i> </button> 
                                 </td>
                             </tr>
                             {%endfor%}
@@ -110,15 +110,37 @@ footer a {
         </div>
     </div>
     <script>
+		var myContract;
         window.addEventListener('load', async () => {
             if(typeof web3 !== 'undefined') {
                 web3 = new Web3(web3.currentProvider);
             }
             else{
-                web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+                web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
             }
+			console.log('Web3: ', web3);
             web3.eth.defaultAccount = web3.eth.accounts[0];
-        const abi =[
+			console.log('default account: ', web3.eth.defaultAccount);
+        	const abi = [
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "uuid",
+				"type": "uint256"
+			}
+		],
+		"name": "addEvent",
+		"type": "event"
+	},
 	{
 		"constant": false,
 		"inputs": [
@@ -201,12 +223,6 @@ footer a {
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
 		"constant": true,
 		"inputs": [
 			{
@@ -265,31 +281,27 @@ footer a {
 		"type": "function"
 	}
 ];
-const addr ="0x091590dE64a68dC63502d9f674552ba00867D4a1";
-myContract = new web3.eth.Contract(abi, addr);
-        console.log(myContract);
+				const addr ="0x6086120De8fE439432C724d7B77a9Fe028107A90";
+				myContract = new web3.eth.Contract(abi, addr);
         });
-        function accept(i, owner_address, recv_address, uuid, amount){
-            // TODO Call transfer credits to write transaction to blockchain
 
-            // web3.eth.getAccounts(function(error, accounts) {
-            //     if(error){
-            //         console.log(error);
-            //     }
-            //     const account = accounts[0];
-            //     console.log(account)
+        function accept(i, owner_address, recv_address, uuid, amount){
+			console.log('Inside JS accept');
+			console.log('This is the contract:');
+			console.log(myContract);
             console.log(owner_address + '\n' + recv_address + '\n' + uuid + '\n' + amount + '\n');
             myContract.methods.transferCredits(owner_address, recv_address, uuid, amount).send({ from: owner_address }, function (err, res) {
-            if (err) {
-                console.log(err);
-                alert("Permission Denied");
-				window.location.reload();
-            }
-            else
-                alert("Record added Successfully !!");
-        });
+				
+				if (err) {
+					console.log('Error message: ', err);
+					alert("Permission Denied");
+					window.location.reload();
+            	}
+				else
+					alert("Record added Successfully !!");
+        	});
 
-            // });
+            //});
             $.ajax(
                 {
                     dataType:"json",
@@ -306,22 +318,6 @@ myContract = new web3.eth.Contract(abi, addr);
                 }
             )
         }
-        function reject(i){
-            $.ajax(
-                {
-                    dataType:"json",
-                    contentType:"application/json",
-                    method:"post",
-                    url:'/reject',
-                    data:JSON.stringify({
-                        "i": i
-                    }),
-                    success:function(){
-                        console.log('success');
-                        location.reload();
-                    }
-                }
-            )
-        }
+        
     </script>
 {%endblock%}

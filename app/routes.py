@@ -8,28 +8,15 @@ from Crypto.Hash import SHA256
 import os, json
 from .config import *
 Session = {}
-# '''
-#     Details of certifying auth
-# '''
-# CONTRACT_ADDR = '0x3836b4bDe418C1Fb63c9b38F1c5AfB294098c58a'
-# WALLET_PRIVATE_KEY = '066bf1c0a608d7dd0e796b3ae5b82037f6da5f4efb61a501760df7e8322e7395'
-# WALLET_ADDRESS = '0x86cF723AdD54A7BaB8099088A21E467Fe27b59c8'
 
-w3 = Web3(HTTPProvider('http://localhost:8545'))
-# w3.eth.enable_unaudited_features()
+w3 = Web3(HTTPProvider('http://localhost:7545'))
 contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
 data_store = {}
 purchase_request_store={}
-
 user_store = {}
 
-#with open('user_store.json', 'w') as filep:
-#    json.dump(user_store, filep)
-
-with open('user_store.json', 'r') as filep:
-    user_store = json.load(filep)
-
+# functions to update JSON files which mock the databases
 def initialize_file(file_name):
     filesize = os.path.getsize(file_name)
 
@@ -39,6 +26,7 @@ def initialize_file(file_name):
         with open(file_name, 'r') as filep:
             return json.load(filep)
 
+# functions to update JSON files which mock the databases
 def update_file(file_name, variable):
     with open(file_name, 'w') as filep:
         json.dump(variable, filep)
@@ -53,25 +41,18 @@ def addCredits(certificate, owner, amount, ttl):
     txn_dict =contract.functions.addCredits(certificate, w3.toChecksumAddress(owner), int(amount), int(ttl)).buildTransaction({
         'nonce':nonce
     })
-    # event_filter = contract.events.
     signed_txn = w3.eth.account.signTransaction(txn_dict, private_key=WALLET_PRIVATE_KEY)
     result = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
-    print(result)
     tx_receipt = w3.eth.getTransactionReceipt(result)
-    print(tx_receipt)
     count = 0
 
     while tx_receipt is None and count < 30:
         time.sleep(20)
         tx_receipt = w3.eth.getTransactionReceipt(result)
-        print(tx_receipt)
     
-    print(tx_receipt)
-
     if tx_receipt is None:
         return False, -1
     uuid = int(tx_receipt['logs'][0]['data'], 16)
-    print(uuid)
     return True, uuid
 
 def generate_hash(data):
@@ -94,11 +75,7 @@ def register():
         password = request.form.get('password')
         wallet_address = request.form.get('wallet-address')
         user_store[username] = {'password':password, 'wallet_address':wallet_address}
-        print(user_store)
-        # CHANGE THIS !!!
         update_file('user_store.json', user_store)
-        #with open('user_store.json', 'w') as filep:
-        #    json.dump(user_store, filep)
         return redirect(url_for('index'))
     return render_template('register.html')
 
@@ -131,11 +108,9 @@ def index():
 def profile():
     return render_template('page-profile.html', username = Session['username'], wallet_address=user_store[Session['username']]['wallet_address'])
 
-# CHANGES MADE HERE - 26th March 2020
 @app.route('/buy')
 @login_required
 def buy():
-    ##sellers=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
     # Prevent buying of self-owned carbon credits
     internal_dict = {}
     seller_dict = {}
@@ -156,9 +131,9 @@ def send_request():
         else:
             purchase_request_store[seller_data['wallet-address']] = [seller_data]
 
-        # CHANGE THIS -> update made to purchase_request_store !!!
         update_file('purchase_request_store.json', purchase_request_store)    
         return redirect(url_for('index'))
+
     return render_template('send-request.html',data=seller_data, session=Session)
     
 
@@ -181,13 +156,7 @@ def sell():
         payload['amount'] = request.form.get('amount')
         payload['time_period'] = request.form.get('time-period')
         addr = request.form.get('wallet-address')
-
-
         save_dir = os.path.join(os.getcwd(), 'xyz.pdf')
-        #print(save_dir)
-        #print(request.files['certificate'].save(save_dir))
-        # put certificate string in payload
-
 
         # Save newly created Carbon Credit to blockchain
         try :
@@ -213,13 +182,11 @@ def sell():
             print(e)
             return render_template("index.html", notif = "Failed!", ds= data_store)
 
-
     return render_template('sell.html', session=Session)
 
 @app.route('/requests')
 @login_required
 def requests():
-    # requests=[{"Name":"abc","CarbonCredits":10},{"Name":"def","CarbonCredits":20},{"Name":"xyz","CarbonCredits":50}]
     requests = []
     key = user_store[Session['username']]['wallet_address']
  
@@ -229,6 +196,7 @@ def requests():
         requests = purchase_request_store[user_store[Session['username']]['wallet_address']]
         print(requests)
         print(len(requests))
+
     return render_template('requests.html',len=len(requests),requests=requests, session=Session)
 
 
@@ -237,6 +205,7 @@ def requests():
 def logout():
     Session.pop('logged_in')
     Session.pop('username')
+
     return redirect(url_for('login'))
 
 @app.route('/accept', methods=['GET','POST'])
@@ -261,19 +230,20 @@ def accept():
             data_store[current_obj['receiver-wallet-address']] = [(data_store[current_obj['wallet-address']][idx])]
         data_store[current_obj['wallet-address']].pop(idx)
 
-        # CHANGE THIS -> data_store update made here !!!
         update_file('data_store.json', data_store)
         return redirect(url_for('requests'))
+
     return redirect(url_for('requests'))
 
-@app.route('/reject', methods=['GET','POST'])
+# handler when purchase request of CC is rejected
+@app.route('/reject/<index>')
 @login_required
-def reject():
+def reject(index):
     print('/reject is called')
-    if request.method == 'POST':
-        data =  request.get_json()
-        current_obj = purchase_request_store[user_store[Session['username']]['wallet_address']].pop(int(data['i']))
-        print(current_obj)
+    print('index :', index)
+    current_obj = purchase_request_store[user_store[Session['username']]['wallet_address']].pop(int(index))
+    update_file('purchase_request_store.json', purchase_request_store)
+
     return redirect(url_for('requests'))
 
 # helper function used to convert wallet address to a username
@@ -281,6 +251,7 @@ def address_to_username(_address):
     for username in user_store.keys():
         if _address == user_store[username]['wallet_address']:
             return username
+    
     return 'NONE'
  
 # global transaction history 
@@ -291,6 +262,7 @@ def transaction_history():
     count = 0
  
     latest_block_number = w3.eth.blockNumber
+    
     # block number starts with 1
     for i in range(1, latest_block_number + 1):
         transaction_count = w3.eth.getBlockTransactionCount(i)
