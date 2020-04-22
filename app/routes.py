@@ -15,6 +15,7 @@ contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 data_store = {}
 purchase_request_store={}
 user_store = {}
+tx_history = {}
 
 # functions to update JSON files which mock the databases
 def initialize_file(file_name):
@@ -34,6 +35,7 @@ def update_file(file_name, variable):
 user_store = initialize_file('user_store.json')
 data_store = initialize_file('data_store.json')
 purchase_request_store = initialize_file('purchase_request_store.json')
+tx_history = initialize_file('tx_history.json')
 
 def addCredits(certificate, owner, amount, ttl):
     print("Inside addCredit")
@@ -53,7 +55,7 @@ def addCredits(certificate, owner, amount, ttl):
     if tx_receipt is None:
         return False, -1
     uuid = int(tx_receipt['logs'][0]['data'], 16)
-    return True, uuid
+    return True, uuid, tx_receipt['transactionHash'].hex()
 
 def generate_hash(data):
     return SHA256.new(data).hexdigest()
@@ -156,25 +158,27 @@ def sell():
         payload['amount'] = request.form.get('amount')
         payload['time_period'] = request.form.get('time-period')
         addr = request.form.get('wallet-address')
+
         save_dir = os.path.join(os.getcwd(), 'xyz.pdf')
+        #print(save_dir)
+        #print(request.files['certificate'].save(save_dir))
+        # put certificate string in payload
 
         # Save newly created Carbon Credit to blockchain
         try :
             with open(save_dir, "rb") as signed_doc:
                 signed_doc_str = signed_doc.read()
-                print(type(signed_doc_str))
                 signed_doc_hash = generate_hash(signed_doc_str)
-                print(signed_doc_hash)
-                result, uuid= addCredits(signed_doc_hash, addr, payload['amount'], int(payload['time_period'])*30*86400)
-                print("CHECK", result, uuid)
+                result, uuid, tx_hash = addCredits(signed_doc_hash, addr, payload['amount'], int(payload['time_period'])*30*86400)
                 if (result):
                     payload['uuid'] = uuid
                     if addr in data_store.keys():
                         data_store[addr].append(payload)
                     else:
                         data_store[addr] = [payload]
-                    # CHANGE THIS -> update made to data_store !!!
                     update_file('data_store.json', data_store)
+                    # add transaction to transaction history
+                    update_transaction_history(tx_hash, WALLET_ADDRESS, addr)
                     return render_template("index.html", notif = "Certificate added to blockchain", ds = data_store)
                 else:
                     return render_template("index.html", notif = "Failed!2", ds= data_store)
@@ -214,8 +218,17 @@ def accept():
     print('/accept is called')
     if request.method == "POST": 
         data =  request.get_json()
-        print(data['i'])
+        print('index:', data['i'])
+        print('from:', data['from'])
+        print('to:', data['to'])
+        print('tx_hash:', data['tx_hash'])
+
+        # add transfer credits transaction to transaction history
+        update_transaction_history(data['tx_hash'], data['from'], data['to'])
+
+        # update view of requests and data_store
         current_obj = purchase_request_store[user_store[Session['username']]['wallet_address']].pop(int(data['i']))
+        update_file('purchase_request_store.json', purchase_request_store)
         curr_list = data_store[current_obj['wallet-address']]
         count = 0
         idx = 0
@@ -231,7 +244,6 @@ def accept():
         data_store[current_obj['wallet-address']].pop(idx)
 
         update_file('data_store.json', data_store)
-        return redirect(url_for('requests'))
 
     return redirect(url_for('requests'))
 
@@ -253,55 +265,31 @@ def address_to_username(_address):
             return username
     
     return 'NONE'
+
+def update_transaction_history(tx_hash, _from, _to):
+    internal_dict = {}
+    internal_dict['from'] = _from
+    internal_dict['from_username'] = address_to_username(_from)
+    internal_dict['to'] = _to
+    internal_dict['to_username'] = address_to_username(_to)
+    tx_history[tx_hash] = internal_dict
+    update_file('tx_history.json', tx_history)
  
 # global transaction history 
 @app.route('/transaction_history')
 def transaction_history():
-    transaction_history = {}
-    internal_dict = {}
-    count = 0
- 
-    latest_block_number = w3.eth.blockNumber
-    
-    # block number starts with 1
-    for i in range(1, latest_block_number + 1):
-        transaction_count = w3.eth.getBlockTransactionCount(i)
-        for j in range(0, transaction_count):
-            internal_dict = {}
-            internal_dict['to'] = w3.eth.getTransactionByBlock(i, j)['to']
-            internal_dict['to_username'] = address_to_username(internal_dict['to'])
-            internal_dict['from'] = w3.eth.getTransactionByBlock(i, j)['from']
-            internal_dict['from_username'] = address_to_username(internal_dict['from'])
-            internal_dict['hash'] = (w3.eth.getTransactionByBlock(i, j)['hash']).hex()
-            count = count + 1
-            transaction_history[count] = internal_dict
-    
-    return render_template('transaction-history.html', transaction = transaction_history)
+    return render_template('transaction-history.html', transaction = tx_history)
  
 # transaction history of a particular user
 @app.route('/user_transaction_history')
 @login_required
 def user_transaction_history():
     user_transaction_history = {}
-    user_internal_dict = {}
     current_user = user_store[Session['username']]['wallet_address']
-    count = 0
- 
-    latest_block_number = w3.eth.blockNumber
-    # block number starts with 1
-    for i in range(1, latest_block_number + 1):
-        transaction_count = w3.eth.getBlockTransactionCount(i)
-        for j in range(0, transaction_count):
-            if  w3.eth.getTransactionByBlock(i, j)['to'] == current_user or  w3.eth.getTransactionByBlock(i, j)['from'] == current_user:
-                user_internal_dict = {}
-                user_internal_dict['to'] = w3.eth.getTransactionByBlock(i, j)['to']
-                user_internal_dict['to_username'] = address_to_username(user_internal_dict['to'])
-                user_internal_dict['from'] = w3.eth.getTransactionByBlock(i, j)['from']
-                user_internal_dict['from_username'] = address_to_username(user_internal_dict['from'])
-                user_internal_dict['hash'] = (w3.eth.getTransactionByBlock(i, j)['hash']).hex()
-                # change made here
-                count = count + 1
-                user_transaction_history[count] = user_internal_dict
+    
+    for key in tx_history.keys():
+        if tx_history[key]['to'] == current_user or tx_history[key]['from'] == current_user:
+            user_transaction_history[key] = tx_history[key]
  
     # no transaction made or received by user
     if user_transaction_history == {}:
