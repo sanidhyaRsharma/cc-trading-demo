@@ -114,12 +114,10 @@ def profile():
 @login_required
 def buy():
     # Prevent buying of self-owned carbon credits
-    internal_dict = {}
     seller_dict = {}
     for key in data_store.keys():
         if key != user_store[Session['username']]['wallet_address']:
-            internal_dict = data_store[key]
-            seller_dict[key] = internal_dict
+            seller_dict[key] = data_store[key]
 
     return render_template('buy.html',sellers=seller_dict, buyer=user_store[Session['username']], session=Session)
 
@@ -127,14 +125,30 @@ def buy():
 @login_required
 def send_request():
     if request.method =='POST':
+        # move entry to purchase_store
         seller_data = request.form.to_dict()
+        print('seller_data:', seller_data)
         if seller_data['wallet-address'] in purchase_request_store.keys():
             purchase_request_store[seller_data['wallet-address']].append(seller_data)
         else:
             purchase_request_store[seller_data['wallet-address']] = [seller_data]
 
+        # remove entry from data_store
+        idx = 0
+        for item in data_store[seller_data['wallet-address']]:
+            print('item:', item)
+            print('idx:', idx)
+            print("seller_data['uuid']:", seller_data['uuid'])
+            print("item['uuid']:", item['uuid'])
+            if int(seller_data['uuid']) == int(item['uuid']):
+                print('Inside if statement')
+                current_obj = data_store[seller_data['wallet-address']].pop(int(idx))
+                break
+            idx += 1
+        
+        update_file('data_store.json', data_store)
         update_file('purchase_request_store.json', purchase_request_store)    
-        return redirect(url_for('index'))
+        return redirect(url_for('buy'))
 
     return render_template('send-request.html',data=seller_data, session=Session)
     
@@ -158,11 +172,7 @@ def sell():
         payload['amount'] = request.form.get('amount')
         payload['time_period'] = request.form.get('time-period')
         addr = request.form.get('wallet-address')
-
         save_dir = os.path.join(os.getcwd(), 'xyz.pdf')
-        #print(save_dir)
-        #print(request.files['certificate'].save(save_dir))
-        # put certificate string in payload
 
         # Save newly created Carbon Credit to blockchain
         try :
@@ -218,30 +228,23 @@ def accept():
     print('/accept is called')
     if request.method == "POST": 
         data =  request.get_json()
-        print('index:', data['i'])
-        print('from:', data['from'])
-        print('to:', data['to'])
-        print('tx_hash:', data['tx_hash'])
-
         # add transfer credits transaction to transaction history
         update_transaction_history(data['tx_hash'], data['from'], data['to'])
 
         # update view of requests and data_store
         current_obj = purchase_request_store[user_store[Session['username']]['wallet_address']].pop(int(data['i']))
         update_file('purchase_request_store.json', purchase_request_store)
-        curr_list = data_store[current_obj['wallet-address']]
-        count = 0
-        idx = 0
-        for item in curr_list:
-            if item['reference_num'] == current_obj['reference-num']:
-                idx = count
-            count+=1
-        
+
+        internal_dict = {'name_of_project': current_obj['name-of-project'], 
+                        'reference_num': current_obj['reference-num'], 
+                        'amount': current_obj['amount'],
+                        'time_period': current_obj['time-period'],
+                        'uuid': current_obj['time-period']}
+
         if current_obj['receiver-wallet-address'] in data_store.keys():
-            data_store[current_obj['receiver-wallet-address']].append(data_store[current_obj['wallet-address']][idx])
+            data_store[current_obj['receiver-wallet-address']].append(internal_dict)
         else:
-            data_store[current_obj['receiver-wallet-address']] = [(data_store[current_obj['wallet-address']][idx])]
-        data_store[current_obj['wallet-address']].pop(idx)
+            data_store[current_obj['receiver-wallet-address']] = [internal_dict]
 
         update_file('data_store.json', data_store)
 
