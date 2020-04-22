@@ -291,6 +291,7 @@ footer a {
 			console.log(myContract);
             console.log(owner_address + '\n' + recv_address + '\n' + uuid + '\n' + amount + '\n');
             myContract.methods.transferCredits(owner_address, recv_address, uuid, amount).send({ from: owner_address }, function (err, res) {
+				
 				if (err) {
 					console.log('Error message: ', err);
 					alert("Permission Denied");

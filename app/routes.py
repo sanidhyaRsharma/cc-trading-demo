@@ -235,6 +235,7 @@ def accept():
 
     return redirect(url_for('requests'))
 
+# handler when purchase request of CC is rejected
 @app.route('/reject/<index>')
 @login_required
 def reject(index):
