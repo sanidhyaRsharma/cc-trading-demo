@@ -55,6 +55,9 @@ def addCredits(certificate, owner, amount, ttl):
     if tx_receipt is None:
         return False, -1
     uuid = int(tx_receipt['logs'][0]['data'], 16)
+
+    # update cc balance
+    Session['balance'] = get_cc_balance()
     return True, uuid, tx_receipt['transactionHash'].hex()
 
 def generate_hash(data):
@@ -96,6 +99,7 @@ def login():
         if(user_store[username]['password'] == request.form.get('password')):
             Session['username'] = username
             Session['logged_in'] = True
+            Session['balance'] = get_cc_balance()
             return redirect(url_for('index'))
     return render_template('page-login.html')
 
@@ -219,6 +223,7 @@ def requests():
 def logout():
     Session.pop('logged_in')
     Session.pop('username')
+    Session.pop('balance')
 
     return redirect(url_for('login'))
 
@@ -247,6 +252,9 @@ def accept():
             data_store[current_obj['receiver-wallet-address']] = [internal_dict]
 
         update_file('data_store.json', data_store)
+
+        # update cc balance
+        Session['balance'] = get_cc_balance()
 
     return redirect(url_for('requests'))
 
@@ -303,3 +311,6 @@ def user_transaction_history():
 @login_required
 def go_to_user_history():
     return redirect(url_for('user_transaction_history'))
+
+def get_cc_balance():
+    return str(contract.functions.viewCurrentBalance(user_store[Session['username']]['wallet_address']).call())
