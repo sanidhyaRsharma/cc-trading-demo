@@ -8,7 +8,7 @@ from Crypto.Hash import SHA256
 import os, json
 from .config import *
 Session = {}
-
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 w3 = Web3(HTTPProvider('http://localhost:7545'))
 contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
@@ -88,19 +88,21 @@ def register():
 def login():
     if request.method == 'POST':    
         username = request.form.get('username')
-        print(username)
+        
         if username is None:
             return render_template('page-login.html')
-        print(user_store.keys(), username)
+
         if username not in user_store.keys():
-            return """
-                <h1>Incorrect username</h1>
-            """
+            flash('Incorrect username or password')
+            return render_template('page-login.html')
+
         if(user_store[username]['password'] == request.form.get('password')):
             Session['username'] = username
             Session['logged_in'] = True
             Session['balance'] = get_cc_balance()
             return redirect(url_for('index'))
+        else: 
+            flash('Incorrect username or password')
     return render_template('page-login.html')
 
 @app.route('/')
