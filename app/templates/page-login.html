@@ -46,6 +46,15 @@
 										<span>Remember me</span>
 									</label>
 								</div>
+								{% with messages = get_flashed_messages() %}
+								{% if messages %}
+									<div class="alert alert-danger" role="alert">
+									{% for message in messages %}
+									<span>{{ message }}</span>
+									{% endfor %}
+									</div>
+								{% endif %}
+								{% endwith %}
 								<button type="submit" class="btn btn-primary btn-lg btn-block">LOGIN</button>
 								<div class="bottom">
 									<span class="helper-text"><i class="fa fa-lock"></i> <a href="#">Forgot password?</a></span>
