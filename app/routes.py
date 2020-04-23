@@ -105,6 +105,10 @@ def login():
             flash('Incorrect username or password')
     return render_template('page-login.html')
 
+@app.route('/help')
+def help():
+    return render_template('help.html')
+
 @app.route('/')
 @app.route('/index')
 @login_required

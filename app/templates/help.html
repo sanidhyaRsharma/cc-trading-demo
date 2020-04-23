@@ -1,5 +1,233 @@
 {% extends "base.html" %}
-
 {% block content %}
+<style>
+    body {
+	font-family: 'Open Sans', sans-serif;
+	font-size: 16px;
+}
+.collapse-area {
+  background: #D7D8DC;
+}
+.panel {
+  margin-top: 0px !important;
+  border-radius: 0px !important;
+  border: none;
+  border-bottom-color: #D7D8DC;
+  box-shadow: 0 0px 0px 0 transparent !important;
+  -moz-box-shadow: 0 0px 0px 0 transparent !important;
+  -webkit-box-shadow: 0 0px 0px 0 transparent !important;
+  -o-box-shadow: 0 0px 0px 0 transparent !important;
+}
+.panel .panel-heading {
+  border-radius: 0px !important;
+  background: #f5f6f8;
+  padding: 0px !important;
+  border-bottom: 0px solid #DDDEE2;
+}
+.panel .panel-heading .panel-title a {
+  text-decoration: none;
+  font-weight: bold;
+  display: block;
+  padding: 23px 15px;
+  font-weight: 300;
+  color: #60626d;
+  background-color: #ffffff;
+  line-height: 29px;
+  position: relative;
+}
+.panel .panel-heading .panel-title a:hover,
+.panel .panel-heading .panel-title a:active {
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  color: #9a4a5a;
+}
+.panel .panel-heading .panel-title a span {
+  float: left;
+  margin-top: 15px;
+  margin-right: 30px;
+  transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+}
+.panel .panel-heading .panel-title a .bar,
+.panel .panel-heading .panel-title a .bar:after {
+  border-width: 1px;
+  border-style: solid;
+  width: 21px;
+  border-radius: 10px;
+  transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+}
+.panel .panel-heading .panel-title a .bar:after {
+  content: "";
+  height: 0;
+  position: absolute;
+  top: 38px;
+  left: 15px;
+}
+.panel .panel-heading .panel-title a.collapsed {
+  background-color: #f5f6f8 !important;
+  border-bottom: 1px solid #eeeef3;
+  position: relative;
+  transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+}
+.panel .panel-heading .panel-title a.collapsed .bar {
+  border-color: #75767F;
+}
+.panel .panel-heading .panel-title a.collapsed .bar:after {
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  border-color: #75767F;
+  transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+}
+.panel-collapse {
+  background-color: #ffffff;
+}
+.panel-collapse .panel-body {
+  background-color: #ffffff;
+  border: 0px solid !important;
+  line-height: 26px;
+  font-weight: 300;
+  margin-left: 50px;
+  padding-bottom: 20px;
+  padding-top: 0px;
+  color: #60626d;
+}
+</style>
+<h1 style="text-align: center;">General FAQ</h1>
 
-{% endblock %}
+        <section class="collapse-area">
+            <div class="container">
+              <div class="row">
+                <div class="collapse-tab col-xs-12">
+                  <div class="panel-group" id="accordion">
+                    <div class="panel panel-default" id="panel1">
+                      <!-- Start: Tab-1 -->
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" class="">
+                            Is Registration required?
+                            <span class="bar hidden-xs"></span>
+                          </a>
+                        </h4>
+                      </div>
+                      <div id="collapseOne" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                        Yes you need to register yourself in order to begin carbon trading.
+                        You can register yourself by going to this <a href="register">link</a>  
+                        </div>
+                      </div>
+                    </div>
+                    <div class="panel panel-default" id="panel2">
+                      <!-- Start: Tab-2 -->
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" class="collapsed">
+                            How can i generate the Carbon Credits? 
+                            <span class="bar hidden-xs"></span>
+                          </a>
+                        </h4>
+                      </div>
+                      <div id="collapseTwo" class="panel-collapse collapse">
+                        <div class="panel-body">
+                          You can generate Carbon Credit by selecting the GenerateCC option from the dropdown list which appears when you click on your profile.
+                          And filling all the necessary details about your project.You can directly go to the page using this <a href="sell">link</a>.
+                          You can also view your CC balance which appears right next to your profile. 
+                        </div>
+                      </div>
+                    </div>
+                    <div class="panel panel-default" id="panel3">
+                      <!-- Start: Tab-3 -->
+                      <div class="panel-heading">
+                        <h4 class="panel-title">
+                          <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" class="collapsed">
+                            How can i buy Carbon Credits?
+                            <span class="bar hidden-xs"></span>
+                          </a>
+                        </h4>
+                      </div>
+                      <div id="collapseThree" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            You can buy carbon credits by going on to buy page by selecting the buy option from dropdown.
+                            You get a list of available carbon credits, you can submit a request to the owner of the CC for the purchase, the status of the request can be viewed in the your notification tab 
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default" id="panel4">
+                        <!-- Start: Tab-4 -->
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour" class="collapsed">
+                                How can i check my previous transactions?
+                                Can i view other transactions as well?
+                              <span class="bar hidden-xs"></span>
+                            </a>
+                          </h4>
+                        </div>
+                        <div id="collapseFour" class="panel-collapse collapse">
+                          <div class="panel-body">
+                            Transparency is one of the main goals of this platform.You can view all the transactions involving you by selecting the history option in from the dropdown.
+                            You can also view the records of all the trasactions happened so far by going to this <a href="#">link</a>   
+                         </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default" id="panel4">
+                        <!-- Start: Tab-5 -->
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive" class="collapsed">
+                                How can a know who is buying the CC generated by me?
+                                Can i choose to whom i want to sell my CC? 
+                              <span class="bar hidden-xs"></span>
+                            </a>
+                          </h4>
+                        </div>
+                        <div id="collapseFive" class="panel-collapse collapse">
+                          <div class="panel-body">
+                            Yes, you have the control to whom you want to sell the CC the buyer sends a request to you for the purchase it is up to you do you want to accept it or not     
+                        </div>
+                        </div>
+                    </div>
+                    
+
+                    <h1 style="text-align: center;">Contact Us</h1>
+                    <div class="panel panel-default" id="panel4">
+                        <!-- Start: Tab-6 -->
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseSix" class="collapsed">
+                                Still have some trouble?
+                              <span class="bar hidden-xs"></span>
+                            </a>
+                          </h4>
+                        </div>
+                        <div id="collapseSix" class="panel-collapse collapse">
+                          <div class="panel-body">
+                            You can contact us at xyz@abc.com     
+                         </div>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+    
+{% endblock%}
