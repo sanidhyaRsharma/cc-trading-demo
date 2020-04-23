@@ -88,6 +88,19 @@ abi="""
 		"type": "constructor"
 	},
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "uuid",
+				"type": "uint256"
+			}
+		],
+		"name": "addEvent",
+		"type": "event"
+	},
+	{
 		"constant": true,
 		"inputs": [
 			{

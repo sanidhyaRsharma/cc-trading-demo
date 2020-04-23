@@ -128,7 +128,7 @@ footer a {
                 web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
             }
             web3.eth.defaultAccount = web3.eth.accounts[0];
-			console.log("account"+web3.eth.defaultAccount)
+			console.log("account="+web3.eth.accounts)
         const abi =[
 	{
 		"constant": false,
@@ -275,11 +275,10 @@ footer a {
 		"stateMutability": "view",
 		"type": "function"
 	}
-]
-console.log("helo")
-const address="0x310395b261bE5890d39c367596755096D0d9C40D";
-	myContract = new web3.eth.Contract(abi, address);
-        console.log("contract="+myContract);
+];
+const addr ="0x310395b261bE5890d39c367596755096D0d9C40D";
+myContract = new web3.eth.Contract(abi, addr);
+        console.log(myContract);
         });
         function accept(i, owner_address, recv_address, uuid, amount){
 			console.log("owner_address="+owner_address);
@@ -292,7 +291,7 @@ const address="0x310395b261bE5890d39c367596755096D0d9C40D";
             //     }
             //     const account = accounts[0];
             //     console.log(account)
-            
+            console.log(owner_address + '\n' + recv_address + '\n' + uuid + '\n' + amount + '\n');
             myContract.methods.transferCredits(owner_address, recv_address, uuid, amount).send({ from: owner_address }, function (err, res) {
             if (err) {
                 console.log(err);

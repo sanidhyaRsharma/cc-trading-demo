@@ -30,6 +30,16 @@ Create `app/contract_abi.py` and paste the abi of your compiled contract's ABI a
 
 Also replace the addresses in the header of routes.py according to your testing platform
 
+Change the abi and port in `app/templates/requests.html`
+
+Create a file called `app/config.py` and insert the following data in it(Added to prevent constant changing of testing params after every pull)
+
+```python
+CONTRACT_ADDR = 'YOUR_CONTRACT_ADDRESS'
+WALLET_PRIVATE_KEY = 'PRIVATE_KEY_OF_CA'
+WALLET_ADDRESS = 'WALLET_ADDRESS_OF_ABOVE_PRIVATE_KEY'
+```
+
 ## TO-DO List
 
 - [ ] Registration page UI
