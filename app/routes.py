@@ -293,7 +293,7 @@ def update_transaction_history(tx_hash, _from, _to):
 # global transaction history 
 @app.route('/transaction_history')
 def transaction_history():
-    return render_template('transaction-history.html', transaction = tx_history)
+    return render_template('transaction-history.html', transaction = tx_history, session=Session)
  
 # transaction history of a particular user
 @app.route('/user_transaction_history')
@@ -308,9 +308,9 @@ def user_transaction_history():
  
     # no transaction made or received by user
     if user_transaction_history == {}:
-        return render_template('blank-transaction-history.html')
+        return render_template('blank-transaction-history.html', session=Session)
     else:
-        return render_template('transaction-history.html', transaction = user_transaction_history)
+        return render_template('transaction-history.html', transaction = user_transaction_history, session=Session)
  
 @login_required
 def go_to_user_history():
@@ -327,4 +327,4 @@ def about_us():
         user_comments[user_comments_count] = {'name': request.form.get('name'), 'email': request.form.get('email'), 'comments': request.form.get('comments')} 
         user_comments_count += 1
         print(user_comments)
-    return render_template('about-us.html')
+    return render_template('about-us.html', session=Session)
