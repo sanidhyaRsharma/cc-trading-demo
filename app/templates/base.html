@@ -6,19 +6,19 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-	 <!--VENDOR CSS -->
+	<!-- VENDOR CSS -->
 	<link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css')}}">
 	<link rel="stylesheet" href="{{url_for('static', filename='vendor/font-awesome/css/font-awesome.min.css')}}">
 	<link rel="stylesheet" href="{{url_for('static', filename='vendor/linearicons/style.css')}}">
 	<link rel="stylesheet" href="{{url_for('static', filename='vendor/chartist/css/chartist-custom.css')}}">
-	 <!--MAIN CSS -->
+	<!-- MAIN CSS -->
 	<link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
 	<!--Modal css-->
-	 <!--GOOGLE FONTS -->
+	<!-- GOOGLE FONTS -->
 	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-	 <!--ICONS -->
+	<!-- ICONS -->
 	<link rel="shortcut icon" href="{{url_for('static', filename='img/hnet.com-image.ico')}}" type="image/x-icon">
 	<link rel="icon" href="{{url_for('static', filename='img/hnet.com-image.ico')}}" type="image/x-icon">
 	<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.37/dist/web3.min.js"></script>
@@ -28,42 +28,64 @@
 </head>
 
 <body>
-	 <!--WRAPPER-->
+	<!-- WRAPPER -->
 	<div id="wrapper">
-		 <!--NAVBAR -->
+		<!-- NAVBAR -->
 		<nav class="navbar navbar-default navbar-fixed-top">
 			<div class="brand">
 				<a href="{{url_for('index')}}"><img  src="{{url_for('static', filename='img/logo.png')}}" alt="Klorofil Logo" class="img-responsive logo"></a>
 			</div>
 			<div class="container-fluid">
-				 <!--<div class="navbar-btn">
+				<!-- <div class="navbar-btn">
 					<button type="button" class="btn-toggle-fullwidth"><i class="lnr lnr-arrow-left-circle"></i></button>
-				</div>
-				 <form class="navbar-form navbar-left">
+				</div> -->
+				<!-- <form class="navbar-form navbar-left">
 					<div class="input-group">
 						<input type="text" value="" class="form-control" placeholder="Search dashboard...">
 						<span class="input-group-btn"><button type="button" class="btn btn-primary">Go</button></span>
 					</div>
 				</form> -->
+				
 				<div id="navbar-menu">
+					
 					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<a href="{{url_for('about_us')}}">About Us</a>
+						</li>
 						<li class="dropdown">
-							<span>Balance: {{session['balance']}} CC</span>
+							
 							<a href="#" class="dropdown-toggle icon-menu" data-toggle="dropdown">
 								<i class="lnr lnr-alarm"></i>
 								<span class="badge bg-danger">5</span>
 							</a>
+							
 							<ul class="dropdown-menu notifications">
 								<li><a href="#" class="notification-item"><span class="dot bg-warning"></span>System space is almost full</a></li>
 								<li><a href="#" class="notification-item"><span class="dot bg-danger"></span>You have 9 unfinished tasks</a></li>
+								<li><a href="#" class="notification-item"><span class="dot bg-success"></span>Monthly report is available</a></li>
+								<li><a href="#" class="notification-item"><span class="dot bg-warning"></span>Weekly meeting in 1 hour</a></li>
 								<li><a href="#" class="notification-item"><span class="dot bg-success"></span>Your request has been approved</a></li>
 								<li><a href="#" class="more">See all notifications</a></li>
 							</ul>
 						</li>
 						<li class="dropdown">
+<<<<<<< HEAD
+=======
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="lnr lnr-question-circle"></i> <span>Help</span> <i class="icon-submenu lnr lnr-chevron-down"></i></a>
+							<ul class="dropdown-menu">
+								<li><a href="#">Basic Use</a></li>
+								<li><a href="#">Working With Data</a></li>
+								<li><a href="#">Security</a></li>
+								<li><a href="#">Troubleshooting</a></li>
+							</ul>
+						</li>
+						<li class="dropdown">
+>>>>>>> a33e7c2b1cc84c51c273710d509d9cf1534726fa
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="{{url_for('static', filename='img/user.png')}}" class="img-circle" alt="Avatar"> <span>{{session['username']}}</span> <i class="icon-submenu lnr lnr-chevron-down"></i></a>
 							<ul class="dropdown-menu">
+								<li><a href="#"><span>Balance: {{session['balance']}} CC</span></a></li>
 								<li><a href="#"><i class="lnr lnr-user"></i> <span>My Profile</span></a></li>
+								<li><a href="#"><i class="lnr lnr-envelope"></i> <span>Message</span></a></li>
 								<li><a href="{{url_for('requests')}}"><i class="lnr lnr-exit"></i> <span>Pending Requests</span></a></li>
 								<li><a href="{{url_for('sell')}}"><i class="lnr lnr-exit"></i> <span>Generate CC</span></a></li>
 								<li><a href="{{url_for('buy')}}"><i class="lnr lnr-exit"></i> <span>Buy</span></a></li>
@@ -71,45 +93,53 @@
 								<li><a href="#"><i class="lnr lnr-cog"></i> <span>Settings</span></a></li>
 								<li><a href="{{url_for('logout')}}"><i class="lnr lnr-exit"></i> <span>Logout</span></a></li>
 								
+								
+
 							</ul>
 						</li>
+						<!-- <li>
+							<a class="update-pro" href="https://www.themeineed.com/downloads/klorofil-pro-bootstrap-admin-dashboard-template/?utm_source=klorofil&utm_medium=template&utm_campaign=KlorofilPro" title="Upgrade to Pro" target="_blank"><i class="fa fa-rocket"></i> <span>UPGRADE TO PRO</span></a>
+						</li> -->
+					</ul>
 				</div>
 			</div>
 		</nav>
-		 <!--END NAVBAR
-		 LEFT SIDEBAR-->
-		 <div id="sidebar-nav" class="sidebar" style="margin-top:5%">
+		<!-- END NAVBAR -->
+		<!-- LEFT SIDEBAR -->
+		<!-- <div id="sidebar-nav" class="sidebar">
 			<div class="sidebar-scroll">
 				<nav>
 					<ul class="nav">
-						<li><span></span></li>
-						<li><a href="{{url_for('index')}}" class="active"><i class="lnr lnr-home"></i> <span>Dashboard</span></a></li>
-						<li><a href="about.html" class=""><i class="lnr lnr-text-format"></i> <span>About Us</span></a></li>						
-						<li><a href="{{url_for('index')}}" class=""><i class="lnr lnr-chart-bars"></i> <span>Charts</span></a></li>
-						<!--<li><a href="panels.html" class=""><i class="lnr lnr-cog"></i> <span>Panels</span></a></li>
+						<li><a href="index.html" class="active"><i class="lnr lnr-home"></i> <span>Dashboard</span></a></li>
 						<li><a href="elements.html" class=""><i class="lnr lnr-code"></i> <span>Elements</span></a></li>
-						<li><a href="typography.html" class=""><i class="lnr lnr-text-format"></i> <span>Typography</span></a></li>
-						<li><a href="icons.html" class=""><i class="lnr lnr-linearicons"></i> <span>Icons</span></a></li>-->
+						<li><a href="charts.html" class=""><i class="lnr lnr-chart-bars"></i> <span>Charts</span></a></li>
+						<li><a href="panels.html" class=""><i class="lnr lnr-cog"></i> <span>Panels</span></a></li>
 						<li><a href="notifications.html" class=""><i class="lnr lnr-alarm"></i> <span>Notifications</span></a></li>
 						<li>
-							<a href="#subPages" data-toggle="collapse" class="collapsed"><i class="lnr lnr-file-empty"></i> <span>Profile</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
+							<a href="#subPages" data-toggle="collapse" class="collapsed"><i class="lnr lnr-file-empty"></i> <span>Pages</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
 							<div id="subPages" class="collapse ">
 								<ul class="nav">
-									<li><a href="page-profile.html" class="">Edit Profile</a></li>
-									<li><a href="#" class="">Delete Profile</a></li>
+									<li><a href="page-profile.html" class="">Profile</a></li>
+									<li><a href="page-login.html" class="">Login</a></li>
 									<li><a href="page-lockscreen.html" class="">Lockscreen</a></li>
 								</ul>
 							</div>
 						</li>
+<<<<<<< HEAD
 						<li><a href="{{url_for('help')}}"><i class="lnr lnr-question-circle"></i> <span>Help</span></a></li>
+=======
+						<li><a href="tables.html" class=""><i class="lnr lnr-dice"></i> <span>Tables</span></a></li>
+						<li><a href="typography.html" class=""><i class="lnr lnr-text-format"></i> <span>Typography</span></a></li>
+						<li><a href="icons.html" class=""><i class="lnr lnr-linearicons"></i> <span>Icons</span></a></li>
+>>>>>>> a33e7c2b1cc84c51c273710d509d9cf1534726fa
 					</ul>
 				</nav>
 			</div>
-		</div>
-		 <!--END LEFT SIDEBAR-->
-		 <!--MAIN -->
+		</div> -->
+		<!-- END LEFT SIDEBAR -->
+		<!-- MAIN -->
 		<div class="main">
-			 <!--MAIN CONTENT -->
+			<!-- MAIN CONTENT -->
 			<br>
 			<br>
 			<div class="main-content">
@@ -117,22 +147,90 @@
 					{% block content%} {% endblock %}
 				</div>
 				<div class="container-fluid">
-						 <div class="row"> 
-							 <div class="col-md-6">
-								 <!--RECENT PURCHASES -->
-								 <div class="panel">
+						<!-- OVERVIEW -->
+						<!-- <div class="panel panel-headline">
+							<div class="panel-heading">
+								<h3 class="panel-title">Weekly Overview</h3>
+								<p class="panel-subtitle">Period: Oct 14, 2016 - Oct 21, 2016</p>
+							</div>
+							<div class="panel-body">
+								<div class="row">
+									<div class="col-md-3">
+										<div class="metric">
+											<span class="icon"><i class="fa fa-download"></i></span>
+											<p>
+												<span class="number">1,252</span>
+												<span class="title">Downloads</span>
+											</p>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="metric">
+											<span class="icon"><i class="fa fa-shopping-bag"></i></span>
+											<p>
+												<span class="number">203</span>
+												<span class="title">Sales</span>
+											</p>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="metric">
+											<span class="icon"><i class="fa fa-eye"></i></span>
+											<p>
+												<span class="number">274,678</span>
+												<span class="title">Visits</span>
+											</p>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="metric">
+											<span class="icon"><i class="fa fa-bar-chart"></i></span>
+											<p>
+												<span class="number">35%</span>
+												<span class="title">Conversions</span>
+											</p>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-9">
+										<div id="headline-chart" class="ct-chart"></div>
+									</div>
+									<div class="col-md-3">
+										<div class="weekly-summary text-right">
+											<span class="number">2,315</span> <span class="percentage"><i class="fa fa-caret-up text-success"></i> 12%</span>
+											<span class="info-label">Total Sales</span>
+										</div>
+										<div class="weekly-summary text-right">
+											<span class="number">$5,758</span> <span class="percentage"><i class="fa fa-caret-up text-success"></i> 23%</span>
+											<span class="info-label">Monthly Income</span>
+										</div>
+										<div class="weekly-summary text-right">
+											<span class="number">$65,938</span> <span class="percentage"><i class="fa fa-caret-down text-danger"></i> 8%</span>
+											<span class="info-label">Total Income</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div> -->
+						<!-- END OVERVIEW -->
+						<!-- <div class="row"> -->
+							<!-- <div class="col-md-6"> -->
+								<!-- RECENT PURCHASES -->
+								<!-- <div class="panel">
 									<div class="panel-heading">
-										<h2 class="panel-title">Recent Purchases</h2>
+										<h3 class="panel-title">Recent Purchases</h3>
 										<div class="right">
 											<button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
-											
+											<button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
 										</div>
 									</div>
 									<div class="panel-body no-padding">
 										<table class="table table-striped">
 											<thead>
 												<tr>
-													<th>Sr No.</th>
+													<th>Order No.</th>
+													<th>Name</th>
 													<th>Amount</th>
 													<th>Date &amp; Time</th>
 													<th>Status</th>
@@ -140,36 +238,41 @@
 											</thead>
 											<tbody>
 												<tr>
-													<td><a href="#">1</a></td>
-													<td>-</td>
-													<td>April 18, 2020</td>
+													<td><a href="#">763648</a></td>
+													<td>Steve</td>
+													<td>$122</td>
+													<td>Oct 21, 2016</td>
 													<td><span class="label label-success">COMPLETED</span></td>
 												</tr>
 												<tr>
-													<td><a href="#">2</a></td>
-													<td>-</td>
-													<td>April 18, 2020</td>
+													<td><a href="#">763649</a></td>
+													<td>Amber</td>
+													<td>$62</td>
+													<td>Oct 21, 2016</td>
 													<td><span class="label label-warning">PENDING</span></td>
 												</tr>
 												<tr>
-													<td><a href="#">3</a></td>
-													<td>-</td>
-													<td>April 18, 2020</td>
-													<td><span class="label label-warning">PENDING</span></td>
+													<td><a href="#">763650</a></td>
+													<td>Michael</td>
+													<td>$34</td>
+													<td>Oct 18, 2016</td>
+													<td><span class="label label-danger">FAILED</span></td>
 												</tr>
 												<tr>
-													<td><a href="#">4</a></td>
-													<td>-</td>
-													<td>April 18, 2020</td>
-													<td><span class="label label-danger">CANCELLED</span></td>
+													<td><a href="#">763651</a></td>
+													<td>Roger</td>
+													<td>$186</td>
+													<td>Oct 17, 2016</td>
+													<td><span class="label label-success">SUCCESS</span></td>
 												</tr>
 												<tr>
-													<td><a href="#">5</a></td>
-													<td>-</td>
-													<td>April 18, 2020</td>
-													<td><span class="label label-warning">PENDING</span></td>
+													<td><a href="#">763652</a></td>
+													<td>Smith</td>
+													<td>$362</td>
+													<td>Oct 16, 2016</td>
+													<td><span class="label label-success">SUCCESS</span></td>
 												</tr>
-											<tbody>
+											</tbody>
 										</table>
 									</div>
 									<div class="panel-footer">
@@ -178,30 +281,86 @@
 											<div class="col-md-6 text-right"><a href="#" class="btn btn-primary">View All Purchases</a></div>
 										</div>
 									</div>
-								</div> 
-								 <!-- END RECENT PURCHASES -->
-							 </div>
-							 <div class="col-md-6">
-								 <!--MULTI CHARTS -->
-								 <div class="panel">
+								</div> -->
+								<!-- END RECENT PURCHASES -->
+							<!-- </div> -->
+							<!-- <div class="col-md-6"> -->
+								<!-- MULTI CHARTS -->
+								<!-- <div class="panel">
 									<div class="panel-heading">
-										<h2 class="panel-title">Buying vs Selling</h2>
+										<h3 class="panel-title">Projection vs. Realization</h3>
 										<div class="right">
 											<button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
-											
+											<button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
 										</div>
 									</div>
 									<div class="panel-body">
 										<div id="visits-trends-chart" class="ct-chart"></div>
 									</div>
-								</div>
-								 <!--END MULTI CHARTS -->
-							 </div> 
-						 </div>
-						 <div class="row"></div>
-							 <div class="col-md-5">
-								 <!--TIMELINE
-								 <div class="panel panel-scrolling">
+								</div> -->
+								<!-- END MULTI CHARTS -->
+							<!-- </div> -->
+						<!-- </div> -->
+						<!-- <div class="row"> -->
+							<!-- <div class="col-md-7"> -->
+								<!-- TODO LIST -->
+								<!-- <div class="panel">
+									<div class="panel-heading">
+										<h3 class="panel-title">To-Do List</h3>
+										<div class="right">
+											<button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+											<button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
+										</div>
+									</div>
+									<div class="panel-body">
+										<ul class="list-unstyled todo-list">
+											<li>
+												<label class="control-inline fancy-checkbox">
+													<input type="checkbox"><span></span>
+												</label>
+												<p>
+													<span class="title">Restart Server</span>
+													<span class="short-description">Dynamically integrate client-centric technologies without cooperative resources.</span>
+													<span class="date">Oct 9, 2016</span>
+												</p>
+												<div class="controls">
+													<a href="#"><i class="icon-software icon-software-pencil"></i></a> <a href="#"><i class="icon-arrows icon-arrows-circle-remove"></i></a>
+												</div>
+											</li>
+											<li>
+												<label class="control-inline fancy-checkbox">
+													<input type="checkbox"><span></span>
+												</label>
+												<p>
+													<span class="title">Retest Upload Scenario</span>
+													<span class="short-description">Compellingly implement clicks-and-mortar relationships without highly efficient metrics.</span>
+													<span class="date">Oct 23, 2016</span>
+												</p>
+												<div class="controls">
+													<a href="#"><i class="icon-software icon-software-pencil"></i></a> <a href="#"><i class="icon-arrows icon-arrows-circle-remove"></i></a>
+												</div>
+											</li>
+											<li>
+												<label class="control-inline fancy-checkbox">
+													<input type="checkbox"><span></span>
+												</label>
+												<p>
+													<strong>Functional Spec Meeting</strong>
+													<span class="short-description">Monotonectally formulate client-focused core competencies after parallel web-readiness.</span>
+													<span class="date">Oct 11, 2016</span>
+												</p>
+												<div class="controls">
+													<a href="#"><i class="icon-software icon-software-pencil"></i></a> <a href="#"><i class="icon-arrows icon-arrows-circle-remove"></i></a>
+												</div>
+											</li>
+										</ul>
+									</div>
+								</div> -->
+								<!-- END TODO LIST -->
+							<!-- </div> -->
+							<!-- <div class="col-md-5"> -->
+								<!-- TIMELINE -->
+								<!-- <div class="panel panel-scrolling">
 									<div class="panel-heading">
 										<h3 class="panel-title">Recent User Activity</h3>
 										<div class="right">
@@ -234,51 +393,126 @@
 										</ul>
 										<button type="button" class="btn btn-primary btn-bottom center-block">Load More</button>
 									</div>
-								</div>
-								 END TIMELINE -->
-							 </div>
-						 </div>
-						 <div class="col-md-4"> 
-								 <!--REALTIME CHART-->
-								 <div class="panel">
+								</div> -->
+								<!-- END TIMELINE -->
+							<!-- </div> -->
+						<!-- </div> -->
+						<!-- <div class="row"> -->
+							<!-- <div class="col-md-4"> -->
+								<!-- TASKS -->
+								<!-- <div class="panel">
 									<div class="panel-heading">
-										<h2 class="panel-title">Generation of CC</h2>
+										<h3 class="panel-title">My Tasks</h3>
 										<div class="right">
 											<button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
-										
+											<button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
+										</div>
+									</div>
+									<div class="panel-body">
+										<ul class="list-unstyled task-list">
+											<li>
+												<p>Updating Users Settings <span class="label-percent">23%</span></p>
+												<div class="progress progress-xs">
+													<div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="23" aria-valuemin="0" aria-valuemax="100" style="width:23%">
+														<span class="sr-only">23% Complete</span>
+													</div>
+												</div>
+											</li>
+											<li>
+												<p>Load &amp; Stress Test <span class="label-percent">80%</span></p>
+												<div class="progress progress-xs">
+													<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
+														<span class="sr-only">80% Complete</span>
+													</div>
+												</div>
+											</li>
+											<li>
+												<p>Data Duplication Check <span class="label-percent">100%</span></p>
+												<div class="progress progress-xs">
+													<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+														<span class="sr-only">Success</span>
+													</div>
+												</div>
+											</li>
+											<li>
+												<p>Server Check <span class="label-percent">45%</span></p>
+												<div class="progress progress-xs">
+													<div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+														<span class="sr-only">45% Complete</span>
+													</div>
+												</div>
+											</li>
+											<li>
+												<p>Mobile App Development <span class="label-percent">10%</span></p>
+												<div class="progress progress-xs">
+													<div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%">
+														<span class="sr-only">10% Complete</span>
+													</div>
+												</div>
+											</li>
+										</ul>
+									</div>
+								</div> -->
+								<!-- END TASKS -->
+							<!-- </div> -->
+							<!-- <div class="col-md-4"> -->
+								<!-- VISIT CHART -->
+								<!-- <div class="panel">
+									<div class="panel-heading">
+										<h3 class="panel-title">Website Visits</h3>
+										<div class="right">
+											<button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+											<button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
+										</div>
+									</div>
+									<div class="panel-body">
+										<div id="visits-chart" class="ct-chart"></div>
+									</div>
+								</div> -->
+								<!-- END VISIT CHART -->
+							<!-- </div> -->
+							<!-- <div class="col-md-4"> -->
+								<!-- REALTIME CHART -->
+								<!-- <div class="panel">
+									<div class="panel-heading">
+										<h3 class="panel-title">System Load</h3>
+										<div class="right">
+											<button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+											<button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
 										</div>
 									</div>
 									<div class="panel-body">
 										<div id="system-load" class="easy-pie-chart" data-percent="70">
 											<span class="percent">70</span>
 										</div>
+										<h4>CPU Load</h4>
 										<ul class="list-unstyled list-justify">
-											<li>Current Month: <span>95%</span></li>
-											<li>Prev Month: <span>-</span></li>
-											<li>Current Quarter: <span>-</span></li>
-											<li>Current Quarter: <span>-</span></li>
-											<li>This year: <span>-</span></li>
+											<li>High: <span>95%</span></li>
+											<li>Average: <span>87%</span></li>
+											<li>Low: <span>20%</span></li>
+											<li>Threads: <span>996</span></li>
+											<li>Processes: <span>259</span></li>
 										</ul>
 									</div>
-								</div> 
-								<!--END REALTIME CHART -->
-							 </div>
-						 </div>
+								</div> -->
+								<!-- END REALTIME CHART -->
+							<!-- </div> -->
+						<!-- </div> -->
 					</div>
 				
 			</div>
-			 <!--END MAIN CONTENT -->
+			<!-- END MAIN CONTENT -->
 		</div>
-		 <!--END MAIN -->
+		<!-- END MAIN -->
 		<div class="clearfix"></div>
-		<!--<footer>
+		<footer>
 			<div class="container-fluid">
 				<p class="copyright">&copy; 2017 <a href="https://www.themeineed.com" target="_blank">Theme I Need</a>. All Rights Reserved.</p>
 			</div>
-		</footer>-->
+		</footer>
 	</div>
-	 <!--END WRAPPER -->
-	 Javascript -->
+	<!-- END WRAPPER -->
+	<!-- Javascript -->
 	<script src="{{url_for('static', filename='vendor/jquery/jquery.min.js')}}"></script>
 	<script src="{{url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js')}}"></script>
 	<script src="{{url_for('static', filename='vendor/jquery-slimscroll/jquery.slimscroll.min.js')}}"></script>

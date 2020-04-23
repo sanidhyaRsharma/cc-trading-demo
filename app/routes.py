@@ -16,6 +16,8 @@ data_store = {}
 purchase_request_store={}
 user_store = {}
 tx_history = {}
+user_comments = {}
+user_comments_count = 0
 
 # functions to update JSON files which mock the databases
 def initialize_file(file_name):
@@ -298,7 +300,7 @@ def update_transaction_history(tx_hash, _from, _to):
 # global transaction history 
 @app.route('/transaction_history')
 def transaction_history():
-    return render_template('transaction-history.html', transaction = tx_history)
+    return render_template('transaction-history.html', transaction = tx_history, session=Session)
  
 # transaction history of a particular user
 @app.route('/user_transaction_history')
@@ -313,9 +315,9 @@ def user_transaction_history():
  
     # no transaction made or received by user
     if user_transaction_history == {}:
-        return render_template('blank-transaction-history.html')
+        return render_template('blank-transaction-history.html', session=Session)
     else:
-        return render_template('transaction-history.html', transaction = user_transaction_history)
+        return render_template('transaction-history.html', transaction = user_transaction_history, session=Session)
  
 @login_required
 def go_to_user_history():
@@ -323,3 +325,13 @@ def go_to_user_history():
 
 def get_cc_balance():
     return str(contract.functions.viewCurrentBalance(user_store[Session['username']]['wallet_address']).call())
+
+@app.route('/about_us', methods=['GET','POST'])
+def about_us():
+    if request.method == 'POST':
+        global user_comments_count
+        print('user_comments_count: ', user_comments_count)
+        user_comments[user_comments_count] = {'name': request.form.get('name'), 'email': request.form.get('email'), 'comments': request.form.get('comments')} 
+        user_comments_count += 1
+        print(user_comments)
+    return render_template('about-us.html', session=Session)
