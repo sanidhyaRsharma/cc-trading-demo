@@ -9,7 +9,7 @@ import os, json
 from .config import *
 Session = {}
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
-w3 = Web3(HTTPProvider('http://localhost:7545'))
+w3 = Web3(HTTPProvider('http://localhost:8545'))
 contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
 data_store = {}
@@ -106,6 +106,10 @@ def login():
         else: 
             flash('Incorrect username or password')
     return render_template('page-login.html')
+
+@app.route('/help')
+def help():
+    return render_template('help.html')
 
 @app.route('/')
 @app.route('/index')
