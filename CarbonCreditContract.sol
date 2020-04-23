@@ -57,8 +57,13 @@ contract ReceiverPays {
         }
     }
     
-    function viewCurrentBalance(address _address) public view returns (CarbonCredits[] memory){
-        return holdings[_address];
+    function viewCurrentBalance(address _address) public view returns (uint256){
+       uint256 balance = 0;
+       for(uint256 i = 0; i < holdings[_address].length; i++) {
+           balance += holdings[_address][i].amount;
+       }
+       
+       return balance;
     }
     
     function incUUID() private{

@@ -1,6 +1,25 @@
 abi="""
 [
 	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "uuid",
+				"type": "uint256"
+			}
+		],
+		"name": "addEvent",
+		"type": "event"
+	},
+	{
 		"constant": false,
 		"inputs": [
 			{
@@ -82,25 +101,6 @@ abi="""
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "uuid",
-				"type": "uint256"
-			}
-		],
-		"name": "addEvent",
-		"type": "event"
-	},
-	{
 		"constant": true,
 		"inputs": [
 			{
@@ -112,46 +112,9 @@ abi="""
 		"name": "viewCurrentBalance",
 		"outputs": [
 			{
-				"components": [
-					{
-						"internalType": "uint256",
-						"name": "uuid",
-						"type": "uint256"
-					},
-					{
-						"internalType": "address",
-						"name": "owner_addr",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "certifying_auth_addr",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "amount",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "ttl",
-						"type": "uint256"
-					},
-					{
-						"internalType": "string",
-						"name": "certi_hash",
-						"type": "string"
-					},
-					{
-						"internalType": "bool",
-						"name": "retired",
-						"type": "bool"
-					}
-				],
-				"internalType": "struct ReceiverPays.CarbonCredits[]",
+				"internalType": "uint256",
 				"name": "",
-				"type": "tuple[]"
+				"type": "uint256"
 			}
 		],
 		"payable": false,
