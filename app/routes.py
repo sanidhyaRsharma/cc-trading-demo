@@ -10,7 +10,7 @@ from .config import *
 
 Session = {}
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
-w3 = Web3(HTTPProvider('http://localhost:8545'))
+w3 = Web3(HTTPProvider('http://localhost:7545'))
 contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
 data_store = {}
@@ -92,6 +92,9 @@ def register():
         wallet_address = request.form.get('wallet-address')
         user_store[username] = {'password':password, 'wallet_address':wallet_address}
         update_file('user_store.json', user_store)
+        Session['username'] = username
+        Session['logged_in'] = True
+        Session['balance'] = get_cc_balance()
         return redirect(url_for('index'))
     return render_template('register.html')
 
