@@ -30,7 +30,12 @@
                                 <div class="logo text-center"><img src="{{url_for('static', filename='img/logo.png')}}" alt="CCX Logo"></div>
                                 <p class="lead">Login to your account</p>
                             </div>
-                            <form class="form-auth-small" action="" method="POST">
+                            <form class="form-auth-small" action="" method="POST" enctype="multipart/form-data">
+                                
+                                <div class="form-group">
+                                    <label for="signin-email" class="control-label">Company logo</label>
+                                    <input type="file" class="form-control" id="image" name="image" placeholder="image">
+                                </div>
                                 <div class="form-group">
                                     <label for="signin-email" class="control-label">Email</label>
                                     <input type="email" class="form-control" id="signin-email" name="username" placeholder="Email">

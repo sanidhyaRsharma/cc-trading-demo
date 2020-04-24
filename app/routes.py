@@ -67,9 +67,12 @@ def generate_hash(data):
     return SHA256.new(data).hexdigest()
 
 def get_image_url():
+    print('getting image url')
     try :
-        image_url = Session['username']['image_id']
+        username = Session['username']
+        image_url = user_store[username]['image_id']
     except Exception as e:
+        print('uh oh ! Didn\'t find the image tag : {}'.format(e))
         image_url = 'logo.png'
     image_url = 'img/' + image_url
     return image_url
@@ -90,11 +93,19 @@ def register():
         username = request.form.get('username')
         password = request.form.get('password')
         wallet_address = request.form.get('wallet-address')
-        user_store[username] = {'password':password, 'wallet_address':wallet_address}
+        file = request.files['image']
+        filename = file.filename
+        file.save(os.path.join('app/static/img', filename))
+        user_store[username] = {
+            'password':password, 
+            'wallet_address':wallet_address, 
+            'image_id': filename
+        }
+        print('userstore : {}'.format(user_store[username]))
         update_file('user_store.json', user_store)
         Session['username'] = username
         Session['logged_in'] = True
-        Session['balance'] = get_cc_balance()
+        Session['balance'] = 0 # get_cc_balance()
         return redirect(url_for('index'))
     return render_template('register.html')
 
