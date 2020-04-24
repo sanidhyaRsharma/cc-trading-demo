@@ -7,6 +7,7 @@ from web3 import Web3, HTTPProvider
 from Crypto.Hash import SHA256
 import os, json
 from .config import *
+
 Session = {}
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 w3 = Web3(HTTPProvider('http://localhost:8545'))
@@ -65,6 +66,14 @@ def addCredits(certificate, owner, amount, ttl):
 def generate_hash(data):
     return SHA256.new(data).hexdigest()
 
+def get_image_url():
+    try :
+        image_url = Session['username']['image_id']
+    except Exception as e:
+        image_url = 'logo.png'
+    image_url = 'img/' + image_url
+    return image_url
+
 def login_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
@@ -109,18 +118,23 @@ def login():
 
 @app.route('/help')
 def help():
-    return render_template('help.html')
+    return render_template('help.html', image_url = url_for('static', filename= get_image_url()))
 
 @app.route('/')
 @app.route('/index')
 @login_required
 def index():
-    return render_template('index.html', notif="", ds = data_store, session=Session)
+    return render_template('index.html', image_url = url_for('static', filename= get_image_url()), notif="", ds = data_store, session=Session)
 
 @app.route('/profile')
 @login_required
 def profile():
-    return render_template('page-profile.html', username = Session['username'], wallet_address=user_store[Session['username']]['wallet_address'])
+    return render_template(
+        'page-profile.html', 
+        email = Session['username'], 
+        image_url = url_for('static', filename= get_image_url()), 
+        wallet_address=user_store[Session['username']]['wallet_address']
+    )
 
 @app.route('/buy')
 @login_required
@@ -131,7 +145,7 @@ def buy():
         if key != user_store[Session['username']]['wallet_address']:
             seller_dict[key] = data_store[key]
 
-    return render_template('buy.html',sellers=seller_dict, buyer=user_store[Session['username']], session=Session)
+    return render_template('buy.html', image_url = url_for('static', filename= get_image_url()), sellers=seller_dict, buyer=user_store[Session['username']], session=Session)
 
 @app.route('/send-request',methods=['GET', 'POST'])
 @login_required
@@ -165,7 +179,7 @@ def send_request():
         update_file('purchase_request_store.json', purchase_request_store)    
         return redirect(url_for('buy'))
 
-    return render_template('send-request.html',data=seller_data, session=Session)
+    return render_template('send-request.html', data=seller_data, image_url = url_for('static', filename= get_image_url()), session=Session)
     
 
 @app.route('/sell', methods=['GET','POST'])
@@ -211,7 +225,7 @@ def sell():
             print(e)
             return render_template("index.html", notif = "Failed!", ds= data_store)
 
-    return render_template('sell.html', session=Session)
+    return render_template('sell.html', image_url = url_for('static', filename= get_image_url()), session=Session)
 
 @app.route('/requests')
 @login_required
@@ -226,7 +240,7 @@ def requests():
         print(requests)
         print(len(requests))
 
-    return render_template('requests.html',len=len(requests),requests=requests, session=Session)
+    return render_template('requests.html', image_url = url_for('static', filename= get_image_url()), len=len(requests),requests=requests, session=Session)
 
 
 @app.route('/logout')
@@ -300,7 +314,7 @@ def update_transaction_history(tx_hash, _from, _to):
 # global transaction history 
 @app.route('/transaction_history')
 def transaction_history():
-    return render_template('transaction-history.html', transaction = tx_history, session=Session)
+    return render_template('transaction-history.html', image_url = url_for('static', filename= get_image_url()), transaction = tx_history, session=Session)
  
 # transaction history of a particular user
 @app.route('/user_transaction_history')
@@ -315,9 +329,9 @@ def user_transaction_history():
  
     # no transaction made or received by user
     if user_transaction_history == {}:
-        return render_template('blank-transaction-history.html', session=Session)
+        return render_template('blank-transaction-history.html', session=Session, image_url = url_for('static', filename= get_image_url()))
     else:
-        return render_template('transaction-history.html', transaction = user_transaction_history, session=Session)
+        return render_template('transaction-history.html', image_url = url_for('static', filename= get_image_url()), transaction = user_transaction_history, session=Session)
  
 @login_required
 def go_to_user_history():
@@ -334,4 +348,4 @@ def about_us():
         user_comments[user_comments_count] = {'name': request.form.get('name'), 'email': request.form.get('email'), 'comments': request.form.get('comments')} 
         user_comments_count += 1
         print(user_comments)
-    return render_template('about-us.html', session=Session)
+    return render_template('about-us.html', image_url = url_for('static', filename= get_image_url()), session=Session)
