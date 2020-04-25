@@ -1,55 +1,52 @@
 {
-    "abi": [
+    "abi":[
         {
-            "constant": false,
+            "inputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        },
+        {
+            "anonymous": false,
             "inputs": [
                 {
-                    "name": "uuid_list",
-                    "type": "uint256[]"
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "uuid",
+                    "type": "uint256"
                 }
             ],
-            "name": "retireCreditList",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "constant": false,
-            "inputs": [],
-            "name": "incUUID",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
+            "name": "addEvent",
+            "type": "event"
         },
         {
             "constant": false,
             "inputs": [
                 {
-                    "name": "verified_certificate",
+                    "internalType": "string",
+                    "name": "_certi_hash",
                     "type": "string"
                 },
                 {
-                    "name": "owner",
+                    "internalType": "address",
+                    "name": "_owner_address",
                     "type": "address"
                 },
                 {
-                    "name": "amount",
+                    "internalType": "uint256",
+                    "name": "_amount",
                     "type": "uint256"
                 },
                 {
-                    "name": "ttl",
+                    "internalType": "uint256",
+                    "name": "_ttl",
                     "type": "uint256"
                 }
             ],
-            "name": "addCredit",
+            "name": "addCredits",
             "outputs": [
                 {
-                    "name": "",
-                    "type": "uint256"
-                },
-                {
+                    "internalType": "uint256",
                     "name": "",
                     "type": "uint256"
                 }
@@ -59,122 +56,72 @@
             "type": "function"
         },
         {
-            "constant": true,
-            "inputs": [],
-            "name": "getUUID",
-            "outputs": [
+            "constant": false,
+            "inputs": [
                 {
-                    "name": "",
-                    "type": "uint256"
+                    "internalType": "address",
+                    "name": "_address",
+                    "type": "address"
                 }
             ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [],
-            "name": "getCurrentBalanceNow",
-            "outputs": [
-                {
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [],
-            "name": "getBalanceCount",
-            "outputs": [
-                {
-                    "name": "count",
-                    "type": "uint256"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [],
-            "name": "getCCListCount",
-            "outputs": [
-                {
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
+            "name": "retireCredits",
+            "outputs": [],
+            "payable": true,
+            "stateMutability": "payable",
             "type": "function"
         },
         {
             "constant": false,
             "inputs": [
                 {
-                    "name": "uuid",
+                    "internalType": "address",
+                    "name": "_owner_address",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_receiver_address",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_uuid",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_amount",
                     "type": "uint256"
                 }
             ],
-            "name": "retireCredit",
+            "name": "transferCredits",
             "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
+            "payable": true,
+            "stateMutability": "payable",
             "type": "function"
         },
         {
             "constant": true,
             "inputs": [
                 {
-                    "name": "id",
-                    "type": "uint256"
+                    "internalType": "address",
+                    "name": "_address",
+                    "type": "address"
                 }
             ],
-            "name": "getCarbonCredit",
+            "name": "viewCurrentBalance",
             "outputs": [
                 {
-                    "components": [
-                        {
-                            "name": "uuid",
-                            "type": "uint256"
-                        },
-                        {
-                            "name": "owner_addr",
-                            "type": "address"
-                        },
-                        {
-                            "name": "certifying_auth_addr",
-                            "type": "address"
-                        },
-                        {
-                            "name": "ttl",
-                            "type": "uint256"
-                        },
-                        {
-                            "name": "retired",
-                            "type": "bool"
-                        }
-                    ],
+                    "internalType": "uint256",
                     "name": "",
-                    "type": "tuple"
+                    "type": "uint256"
                 }
             ],
             "payable": false,
             "stateMutability": "view",
             "type": "function"
-        },
-        {
-            "inputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "constructor"
         }
     ],
-    "contract_address": "0x92A4680C2E9768F4A0C037f18a2e4eA6FfA45Db3"
+
+    "contract_address": "0x310395b261bE5890d39c367596755096D0d9C40D"
 }
