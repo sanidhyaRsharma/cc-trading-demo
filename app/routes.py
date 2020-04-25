@@ -7,6 +7,10 @@ from web3 import Web3, HTTPProvider
 from Crypto.Hash import SHA256
 import os, json
 from .config import *
+import datetime
+#from datetime import datetime
+#from datetime import date 
+
 Session = {}
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 w3 = Web3(HTTPProvider('http://localhost:7545'))
@@ -18,6 +22,9 @@ user_store = {}
 tx_history = {}
 user_comments = {}
 user_comments_count = 0
+cc_generated_chart_data = {}
+cc_generated_leaderboard_data = {}
+cc_bought_chart_data = {}
 
 # functions to update JSON files which mock the databases
 def initialize_file(file_name):
@@ -38,6 +45,9 @@ user_store = initialize_file('user_store.json')
 data_store = initialize_file('data_store.json')
 purchase_request_store = initialize_file('purchase_request_store.json')
 tx_history = initialize_file('tx_history.json')
+cc_generated_chart_data = initialize_file('cc_generated_chart_data.json')
+cc_generated_leaderboard_data = initialize_file('cc_generated_leaderboard_data.json')
+cc_bought_chart_data = initialize_file('cc_bought_chart_data.json')
 
 def addCredits(certificate, owner, amount, ttl):
     print("Inside addCredit")
@@ -60,6 +70,13 @@ def addCredits(certificate, owner, amount, ttl):
 
     # update cc balance
     Session['balance'] = get_cc_balance()
+
+    # update cc_generated_chart_data
+    store_cc_generated_data(int(amount))
+
+    # update cc_generated_leaderboard_data
+    store_cc_generated_leaderboard(address_to_username(owner), int(amount))
+
     return True, uuid, tx_receipt['transactionHash'].hex()
 
 def generate_hash(data):
@@ -71,7 +88,7 @@ def login_required(f):
         if 'logged_in' in Session:
             return f(*args, **kwargs)
         else:
-            flash('UNAUTHORIZED! Login required')
+            #flash('UNAUTHORIZED! Login required')
             return redirect(url_for('login'))
     return wrap
 
@@ -86,7 +103,7 @@ def register():
         Session['username'] = username
         Session['logged_in'] = True
         Session['balance'] = get_cc_balance()
-        return redirect(url_for('index'))
+        return redirect(url_for('dashboard'))
     return render_template('register.html')
 
 @app.route('/login', methods=['GET','POST'])
@@ -105,7 +122,7 @@ def login():
             Session['username'] = username
             Session['logged_in'] = True
             Session['balance'] = get_cc_balance()
-            return redirect(url_for('index'))
+            return redirect(url_for('dashboard'))
         else: 
             flash('Incorrect username or password')
     return render_template('page-login.html')
@@ -267,6 +284,9 @@ def accept():
         # update cc balance
         Session['balance'] = get_cc_balance()
 
+        # update cc_bought_data
+        store_cc_bought(int(current_obj['amount']))
+
     return redirect(url_for('requests'))
 
 # handler when purchase request of CC is rejected
@@ -335,3 +355,164 @@ def about_us():
         user_comments_count += 1
         print(user_comments)
     return render_template('about-us.html', session=Session)
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    # for cc generated chart
+    cc_gen_data = cc_generated_per_month()
+    # for leaderboard
+    cc_gen_leaders = get_top_N_generators()
+    # N transactions
+    n_transactions = display_N_transactions()
+    # for cc bought pie chart
+    cc_bought_data = cc_bought_per_month()
+
+    return render_template('dashboard.html', session=Session, generated=cc_gen_data, leaderboard=cc_gen_leaders, transactions=n_transactions, bought= cc_bought_data)
+
+def getCurrentYear():
+    return str(datetime.datetime.today().year)
+
+def getCurrentMonth():
+    return str(datetime.datetime.today().month)
+
+def getCurrentDay():
+    return str(datetime.datetime.today().day)
+
+def getCurrentWeekDay():
+    #day = datetime.date(int(year), int(month), int(day))
+    week_day = datetime.datetime.today().weekday()
+    # week_day_list = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    return week_day
+
+def store_cc_generated_data(cc_generated):
+    year = getCurrentYear()
+    month = getCurrentMonth()
+    day = getCurrentDay()
+    #week_day = getCurrentWeekDay()
+
+    if year in cc_generated_chart_data.keys():
+        if month in cc_generated_chart_data[year].keys():
+            if day in cc_generated_chart_data[year][month].keys():
+                cc_generated_chart_data[year][month][day] += cc_generated
+            else:
+                cc_generated_chart_data[year][month] = {day: cc_generated}
+    else:
+            cc_generated_chart_data[year] = {month: {day: cc_generated}}
+    update_file('cc_generated_chart_data.json', cc_generated_chart_data)
+
+def cc_generated_per_month():
+    year = getCurrentYear()
+    display_data_dict = {}
+    display_data_list = []
+    amount = 0
+
+    if year in cc_generated_chart_data.keys():
+        for month in cc_generated_chart_data[year].keys():
+            for day in cc_generated_chart_data[year][month].keys():
+                amount += cc_generated_chart_data[year][month][day]
+            display_data_dict[month] = amount
+            amount = 0
+    else:
+        display_data_list = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        return display_data_list
+    
+    # format data
+    for i in range(1,13):
+        if str(i) in display_data_dict.keys():
+            display_data_list.append(display_data_dict[str(i)])
+        else:
+            display_data_list.append(0)
+    
+    return display_data_list
+
+def store_cc_generated_leaderboard(user, amount):
+    if user in cc_generated_leaderboard_data.keys():
+        cc_generated_leaderboard_data[user] += amount
+    else:
+        cc_generated_leaderboard_data[user] = amount
+
+    update_file('cc_generated_leaderboard_data.json', cc_generated_leaderboard_data)
+
+def get_top_N_generators():
+    N = len(cc_generated_leaderboard_data.keys())
+    top_N = {}
+    dup_dict = cc_generated_leaderboard_data.copy()
+
+    # store only the top 5 candidates
+    # if there are less than 5 memebers, then show all of them in the leaderboard
+    if N > 5:
+        N = 5
+
+    for i in range(0, N):  
+        max_val = 0
+          
+        for user in dup_dict.keys():
+            if dup_dict[user] > max_val:
+                max_val = dup_dict[user]
+                max_user = user
+
+        top_N[max_user] = max_val
+        del dup_dict[max_user]
+            
+    print(top_N)
+    return(top_N)
+
+def display_N_transactions():
+    N = len(tx_history.keys())
+    N_transactions = {}
+    count = 0
+
+    # display 5 transactions or less
+    for hash in tx_history.keys():
+        N_transactions[hash[:10]] = tx_history[hash]
+        count += 1
+        if count >= 5:
+            return N_transactions
+    return N_transactions
+
+def store_cc_bought(cc_bought):
+    year = getCurrentYear()
+    month = getCurrentMonth()
+    day = getCurrentDay()
+    #week_day = getCurrentWeekDay()
+
+    if year in cc_bought_chart_data.keys():
+        if month in cc_bought_chart_data[year].keys():
+            if day in cc_bought_chart_data[year][month].keys():
+                cc_bought_chart_data[year][month][day] += cc_bought
+            else:
+                cc_bought_chart_data[year][month] = {day: cc_bought}
+    else:
+            cc_bought_chart_data[year] = {month: {day: cc_bought}}
+    update_file('cc_bought_chart_data.json', cc_bought_chart_data)
+
+def cc_bought_per_month():
+    year = getCurrentYear()
+    display_data_dict = {}
+    display_data_list = []
+    amount = 0
+
+    if year in cc_bought_chart_data.keys():
+        for month in cc_bought_chart_data[year].keys():
+            for day in cc_bought_chart_data[year][month].keys():
+                amount += cc_bought_chart_data[year][month][day]
+            display_data_dict[month] = amount
+            amount = 0
+    else:
+        display_data_list = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        return display_data_list
+    
+    # format data
+    for i in range(1,13):
+        if str(i) in display_data_dict.keys():
+            display_data_list.append(display_data_dict[str(i)])
+        else:
+            display_data_list.append(0)
+    
+    return display_data_list
+
+
+      
+
+    
