@@ -139,13 +139,16 @@ def buy():
 @app.route('/send-request',methods=['GET', 'POST'])
 @login_required
 def send_request():
+    print("send-request aaya")
     if request.method =='POST':
         # move entry to purchase_store
         seller_data = request.form.to_dict()
         print('seller_data:', seller_data)
         if seller_data['wallet-address'] in purchase_request_store.keys():
+            print("if mai aaya")
             purchase_request_store[seller_data['wallet-address']].append(seller_data)
         else:
+            print("else mai aaya")
             purchase_request_store[seller_data['wallet-address']] = [seller_data]
 
         # remove entry from data_store

@@ -112,15 +112,16 @@ footer a {
     <script>
 		var myContract;
         window.addEventListener('load', async () => {
-            if(typeof web3 !== 'undefined') {
-                web3 = new Web3(web3.currentProvider);
-            }
-            else{
-                web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-            }
-			console.log('Web3: ', web3);
-            web3.eth.defaultAccount = web3.eth.accounts[0];
-			console.log('default account: ', web3.eth.defaultAccount);
+            var web3 = new Web3("http://localhost:7545");
+			var accounts = web3.eth.getAccounts();
+			console.log(accounts);
+
+			accounts.then(function(result) {
+				console.log("result ", result);
+				web3.eth.defaultAccount = result[0];
+				console.log('default account: ', web3.eth.defaultAccount);
+			});
+
         	const abi = [
 	{
 		"inputs": [],
@@ -245,7 +246,7 @@ footer a {
 	}
 ];
 				
-				const addr ="0x310395b261bE5890d39c367596755096D0d9C40D";
+				const addr = "0xC2329197A35cF5100938F7291Ac2654238cf7b4d";
 				myContract = new web3.eth.Contract(abi, addr);
 				console.log(myContract);
 			});
@@ -253,7 +254,7 @@ footer a {
         function accept(i, owner_address, recv_address, uuid, amount){
 			console.log(owner_address + '\n' + recv_address + '\n' + uuid + '\n' + amount + '\n');
 			var tx_hash;
-            myContract.methods.transferCredits(owner_address, recv_address, uuid, amount).send({ from: owner_address }, function (err, res) {
+            myContract.methods.transferCredits(owner_address, recv_address, uuid, amount).send({ from: owner_address, gas : 3000000 }, function (err, res) {
 				if (err) {
 					console.log(err);
 					alert("Permission Denied");
