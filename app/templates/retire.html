@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block content %}
+{% for owner in ccowners.keys() %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{owner}}</h3>
+                <div class="right">
+                    <button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+                    <button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
+                </div>
+            </div>
+            <div class="panel-body">
+                <p>{{ccowners[owner]}}</p>
+                <div class="right">
+                    <button class="btn btn-danger" onclick="retire('{{owner}}')">RETIRE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+<script>
+    var myContract;
+    window.addEventListener('load', async () => {
+            if(typeof web3 !== 'undefined') {
+                web3 = new Web3(web3.currentProvider);
+            }
+            else{
+                web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+            }
+			console.log('Web3: ', web3);
+            web3.eth.defaultAccount = web3.eth.accounts[0];
+			console.log('default account: ', web3.eth.defaultAccount);
+        	const abi = [
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "uuid",
+				"type": "uint256"
+			}
+		],
+		"name": "addEvent",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_certi_hash",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_owner_address",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_ttl",
+				"type": "uint256"
+			}
+		],
+		"name": "addCredits",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			}
+		],
+		"name": "retireCredits",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_owner_address",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_receiver_address",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_uuid",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			}
+		],
+		"name": "transferCredits",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			}
+		],
+		"name": "viewCurrentBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+				
+				const addr ="0x091590dE64a68dC63502d9f674552ba00867D4a1";
+				myContract = new web3.eth.Contract(abi, addr);
+				console.log(myContract);
+			});
+
+    function retire(wallet_address){
+        var tx_hash;
+        myContract.methods.retireCredits(wallet_address).send({from: "0x33D6F007E249C1e6dfA0F23E0fDa9db8c0DbA3C0"}, function (err, res) {
+            if(err){
+                console.log(err);
+                alert("Permission Denied");
+                window.location.reload();
+            }
+            else{
+                tx_hash=res;
+                console.log(tx_hash);
+                //TODO send POST to remove the retired CCs
+                $.ajax({
+                    dataType:"json",
+                    contentType:"application/json",
+                    method:"post",
+                    url:"/retire",
+                    data:JSON.stringify({
+                        tx_hash:tx_hash,
+                        from_addr: "0x33D6F007E249C1e6dfA0F23E0fDa9db8c0DbA3C0",
+                        to_addr: "0x091590dE64a68dC63502d9f674552ba00867D4a1",
+                        wallet_address: wallet_address
+                    })
+                })
+                alert("Credits retired successfully!");
+                window.location.reload();
+            }
+        });
+    }
+</script>
+{% endblock %}

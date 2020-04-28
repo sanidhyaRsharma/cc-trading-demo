@@ -15,6 +15,7 @@ contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 data_store = {}
 purchase_request_store={}
 user_store = {}
+retired_store = {}
 tx_history = {}
 user_comments = {}
 user_comments_count = 0
@@ -37,6 +38,7 @@ def update_file(file_name, variable):
 user_store = initialize_file('user_store.json')
 data_store = initialize_file('data_store.json')
 purchase_request_store = initialize_file('purchase_request_store.json')
+retired_store = initialize_file('retired_store.json')
 tx_history = initialize_file('tx_history.json')
 
 def addCredits(certificate, owner, amount, ttl):
@@ -194,7 +196,8 @@ def sell():
             with open(save_dir, "rb") as signed_doc:
                 signed_doc_str = signed_doc.read()
                 signed_doc_hash = generate_hash(signed_doc_str)
-                result, uuid, tx_hash = addCredits(signed_doc_hash, addr, payload['amount'], int(payload['time_period'])*30*86400)
+                # result, uuid, tx_hash = addCredits(signed_doc_hash, addr, payload['amount'], int(payload['time_period'])*30*86400)
+                result, uuid, tx_hash = addCredits(signed_doc_hash, addr, payload['amount'], int(payload['time_period']))
                 if (result):
                     payload['uuid'] = uuid
                     if addr in data_store.keys():
@@ -326,6 +329,9 @@ def go_to_user_history():
 def get_cc_balance():
     return str(contract.functions.viewCurrentBalance(user_store[Session['username']]['wallet_address']).call())
 
+def get_wallet_balance(wallet_address):
+    return str(contract.functions.viewCurrentBalance(wallet_address).call())
+
 @app.route('/about_us', methods=['GET','POST'])
 def about_us():
     if request.method == 'POST':
@@ -335,3 +341,23 @@ def about_us():
         user_comments_count += 1
         print(user_comments)
     return render_template('about-us.html', session=Session)
+
+@app.route('/retire', methods=['GET','POST'])
+def retire():
+    if request.method == 'POST':
+        data = request.get_json()
+        address = data['wallet_address']
+        retired_store[address] = data_store[address]
+        data_store.pop(address)
+        update_file('data_store.json', data_store)
+        update_file('retired_store.json', retired_store)
+        tx_hash = data['tx_hash']
+        from_addr = data['from_addr']
+        to_addr = data['to_addr']
+        update_transaction_history(tx_hash, from_addr, to_addr)
+        update_file('tx_history.json', tx_history)
+    ccowners={}
+    for wallet in data_store.keys():
+        ccowners[wallet] = get_wallet_balance(wallet)
+    return render_template('retire.html', ccowners = ccowners)
+
