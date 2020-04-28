@@ -9,12 +9,13 @@ import os, json
 from .config import *
 Session = {}
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
-w3 = Web3(HTTPProvider('http://localhost:8545'))
+w3 = Web3(HTTPProvider('http://localhost:7545'))
 contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
 data_store = {}
 purchase_request_store={}
 user_store = {}
+retired_store = {}
 tx_history = {}
 user_comments = {}
 user_comments_count = 0
@@ -37,6 +38,7 @@ def update_file(file_name, variable):
 user_store = initialize_file('user_store.json')
 data_store = initialize_file('data_store.json')
 purchase_request_store = initialize_file('purchase_request_store.json')
+retired_store = initialize_file('retired_store.json')
 tx_history = initialize_file('tx_history.json')
 
 def addCredits(certificate, owner, amount, ttl):
@@ -83,6 +85,9 @@ def register():
         wallet_address = request.form.get('wallet-address')
         user_store[username] = {'password':password, 'wallet_address':wallet_address}
         update_file('user_store.json', user_store)
+        Session['username'] = username
+        Session['logged_in'] = True
+        Session['balance'] = get_cc_balance()
         return redirect(url_for('index'))
     return render_template('register.html')
 
@@ -109,7 +114,7 @@ def login():
 
 @app.route('/help')
 def help():
-    return render_template('help.html')
+    return render_template('help.html', session=Session)
 
 @app.route('/')
 @app.route('/index')
@@ -191,7 +196,8 @@ def sell():
             with open(save_dir, "rb") as signed_doc:
                 signed_doc_str = signed_doc.read()
                 signed_doc_hash = generate_hash(signed_doc_str)
-                result, uuid, tx_hash = addCredits(signed_doc_hash, addr, payload['amount'], int(payload['time_period'])*30*86400)
+                # result, uuid, tx_hash = addCredits(signed_doc_hash, addr, payload['amount'], int(payload['time_period'])*30*86400)
+                result, uuid, tx_hash = addCredits(signed_doc_hash, addr, payload['amount'], int(payload['time_period']))
                 if (result):
                     payload['uuid'] = uuid
                     if addr in data_store.keys():
@@ -323,6 +329,9 @@ def go_to_user_history():
 def get_cc_balance():
     return str(contract.functions.viewCurrentBalance(user_store[Session['username']]['wallet_address']).call())
 
+def get_wallet_balance(wallet_address):
+    return str(contract.functions.viewCurrentBalance(wallet_address).call())
+
 @app.route('/about_us', methods=['GET','POST'])
 def about_us():
     if request.method == 'POST':
@@ -332,3 +341,23 @@ def about_us():
         user_comments_count += 1
         print(user_comments)
     return render_template('about-us.html', session=Session)
+
+@app.route('/retire', methods=['GET','POST'])
+def retire():
+    if request.method == 'POST':
+        data = request.get_json()
+        address = data['wallet_address']
+        retired_store[address] = data_store[address]
+        data_store.pop(address)
+        update_file('data_store.json', data_store)
+        update_file('retired_store.json', retired_store)
+        tx_hash = data['tx_hash']
+        from_addr = data['from_addr']
+        to_addr = data['to_addr']
+        update_transaction_history(tx_hash, from_addr, to_addr)
+        update_file('tx_history.json', tx_history)
+    ccowners={}
+    for wallet in data_store.keys():
+        ccowners[wallet] = get_wallet_balance(wallet)
+    return render_template('retire.html', ccowners = ccowners)
+
