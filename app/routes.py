@@ -207,12 +207,12 @@ def sell():
                     update_file('data_store.json', data_store)
                     # add transaction to transaction history
                     update_transaction_history(tx_hash, WALLET_ADDRESS, addr)
-                    return render_template("index.html", notif = "Certificate added to blockchain", ds = data_store)
+                    return render_template("index.html", notif = "Certificate added to blockchain", ds = data_store, session=Session)
                 else:
-                    return render_template("index.html", notif = "Failed!2", ds= data_store)
+                    return render_template("index.html", notif = "Failed!2", ds= data_store, session=Session)
         except Exception as e:
             print(e)
-            return render_template("index.html", notif = "Failed!", ds= data_store)
+            return render_template("index.html", notif = "Failed!", ds= data_store, session=Session)
 
     return render_template('sell.html', session=Session)
 
@@ -229,7 +229,7 @@ def requests():
         print(requests)
         print(len(requests))
 
-    return render_template('requests.html',len=len(requests),requests=requests, session=Session)
+    return render_template('requests.html',len=len(requests),requests=requests, session=Session, CONTRACT_ADDR=CONTRACT_ADDR, WALLET_ADDRESS=WALLET_ADDRESS)
 
 
 @app.route('/logout')
@@ -343,6 +343,7 @@ def about_us():
     return render_template('about-us.html', session=Session)
 
 @app.route('/retire', methods=['GET','POST'])
+@login_required
 def retire():
     if request.method == 'POST':
         data = request.get_json()
@@ -359,5 +360,5 @@ def retire():
     ccowners={}
     for wallet in data_store.keys():
         ccowners[wallet] = get_wallet_balance(wallet)
-    return render_template('retire.html', ccowners = ccowners)
+    return render_template('retire.html', ccowners = ccowners, session=Session, CONTRACT_ADDR=CONTRACT_ADDR, WALLET_ADDRESS=WALLET_ADDRESS)
 
