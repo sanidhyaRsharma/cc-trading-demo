@@ -23,6 +23,8 @@
 {% endfor %}
 <script>
     var myContract;
+	const addr ={{CONTRACT_ADDR|safe}};
+	const owner_address ={{WALLET_ADDRESS|safe}};
     window.addEventListener('load', async () => {
             if(typeof web3 !== 'undefined') {
                 web3 = new Web3(web3.currentProvider);
@@ -34,25 +36,6 @@
             web3.eth.defaultAccount = web3.eth.accounts[0];
 			console.log('default account: ', web3.eth.defaultAccount);
         	const abi = [
-	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "uuid",
-				"type": "uint256"
-			}
-		],
-		"name": "addEvent",
-		"type": "event"
-	},
 	{
 		"constant": false,
 		"inputs": [
@@ -135,6 +118,25 @@
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "uuid",
+				"type": "uint256"
+			}
+		],
+		"name": "addEvent",
+		"type": "event"
+	},
+	{
 		"constant": true,
 		"inputs": [
 			{
@@ -156,15 +158,13 @@
 		"type": "function"
 	}
 ];
-				
-				const addr ="0x091590dE64a68dC63502d9f674552ba00867D4a1";
 				myContract = new web3.eth.Contract(abi, addr);
 				console.log(myContract);
 			});
 
     function retire(wallet_address){
         var tx_hash;
-        myContract.methods.retireCredits(wallet_address).send({from: "0x33D6F007E249C1e6dfA0F23E0fDa9db8c0DbA3C0"}, function (err, res) {
+        myContract.methods.retireCredits(wallet_address).send({from: owner_address, function (err, res) {
             if(err){
                 console.log(err);
                 alert("Permission Denied");
@@ -181,8 +181,8 @@
                     url:"/retire",
                     data:JSON.stringify({
                         tx_hash:tx_hash,
-                        from_addr: "0x33D6F007E249C1e6dfA0F23E0fDa9db8c0DbA3C0",
-                        to_addr: "0x091590dE64a68dC63502d9f674552ba00867D4a1",
+                        from_addr: owner_address,
+                        to_addr: addr,
                         wallet_address: wallet_address
                     })
                 })

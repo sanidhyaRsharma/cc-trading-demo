@@ -111,6 +111,7 @@ footer a {
     </div>
     <script>
 		var myContract;
+		const addr ="{{ CONTRACT_ADDR|safe }}";
         window.addEventListener('load', async () => {
             if(typeof web3 !== 'undefined') {
                 web3 = new Web3(web3.currentProvider);
@@ -121,26 +122,7 @@ footer a {
 			console.log('Web3: ', web3);
             web3.eth.defaultAccount = web3.eth.accounts[0];
 			console.log('default account: ', web3.eth.defaultAccount);
-        	const abi = [
-	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "uuid",
-				"type": "uint256"
-			}
-		],
-		"name": "addEvent",
-		"type": "event"
-	},
+        	const abi=[
 	{
 		"constant": false,
 		"inputs": [
@@ -223,6 +205,25 @@ footer a {
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "uuid",
+				"type": "uint256"
+			}
+		],
+		"name": "addEvent",
+		"type": "event"
+	},
+	{
 		"constant": true,
 		"inputs": [
 			{
@@ -244,8 +245,6 @@ footer a {
 		"type": "function"
 	}
 ];
-				
-				const addr ="0x091590dE64a68dC63502d9f674552ba00867D4a1";
 				myContract = new web3.eth.Contract(abi, addr);
 				console.log(myContract);
 			});
