@@ -23,8 +23,8 @@
 {% endfor %}
 <script>
     var myContract;
-	const addr ={{CONTRACT_ADDR|safe}};
-	const owner_address ={{WALLET_ADDRESS|safe}};
+	const addr ='{{CONTRACT_ADDR|safe}}';
+	const owner_address ='{{WALLET_ADDRESS|safe}}';
     window.addEventListener('load', async () => {
             if(typeof web3 !== 'undefined') {
                 web3 = new Web3(web3.currentProvider);
@@ -164,7 +164,7 @@
 
     function retire(wallet_address){
         var tx_hash;
-        myContract.methods.retireCredits(wallet_address).send({from: owner_address, function (err, res) {
+        myContract.methods.retireCredits(wallet_address).send({from: owner_address}, function (err, res) {
             if(err){
                 console.log(err);
                 alert("Permission Denied");

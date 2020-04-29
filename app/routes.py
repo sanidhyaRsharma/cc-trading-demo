@@ -212,7 +212,7 @@ def sell():
                     return render_template("index.html", notif = "Failed!2", ds= data_store, session=Session)
         except Exception as e:
             print(e)
-            return render_template("index.html", notif = "Failed!", ds= data_store, session=Session)
+            return render_template("index.html", notif = "Failed!", ds= data_store, session=Session, CONTRACT_ADDR=CONTRACT_ADDR, WALLET_ADDRESS=WALLET_ADDRESS)
 
     return render_template('sell.html', session=Session)
 
