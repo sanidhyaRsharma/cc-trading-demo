@@ -1,25 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
-{% for owner in ccowners.keys() %}
+{% for owner in data_store.keys() %}
+<div class="row">
+	<div class="col-md-8"><h3>{{owner}}</h3></div>
+</div>
+<hr>
+{% for project in data_store[owner] %}
 <div class="row">
     <div class="col-md-8">
         <div class="panel">
             <div class="panel-heading">
-                <h3 class="panel-title">{{owner}}</h3>
+				<h3 class="panel-title">{{project['name_of_project']}}</h3>
                 <div class="right">
                     <button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
                     <button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
                 </div>
             </div>
             <div class="panel-body">
-                <p>{{ccowners[owner]}}</p>
+                <p>{{project['amount']}} CC</p>
                 <div class="right">
-                    <button class="btn btn-danger" onclick="retire('{{owner}}')">RETIRE</button>
+                    <button class="btn btn-danger" onclick="retire('{{owner}}',{{project.uuid}})">RETIRE</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endfor %}
 {% endfor %}
 <script>
     var myContract;
@@ -163,7 +169,7 @@
 				console.log(myContract);
 			});
 
-    function retire(wallet_address){
+    function retire(wallet_address, uuid){
         var tx_hash;
         myContract.methods.retireCredits(wallet_address).send({from: owner_address}, function (err, res) {
             if(err){
@@ -173,6 +179,7 @@
             }
             else{
                 tx_hash=res;
+
                 console.log(tx_hash);
                 //TODO send POST to remove the retired CCs
                 $.ajax({
@@ -184,7 +191,8 @@
                         tx_hash:tx_hash,
                         from_addr: owner_address,
                         to_addr: addr,
-                        wallet_address: wallet_address
+                        wallet_address: wallet_address,
+						uuid: uuid
                     })
                 })
                 alert("Credits retired successfully!");
