@@ -5,6 +5,7 @@ contract ReceiverPays {
     address certifying_owner;
     uint256 uuid = 0;
     event addEvent (uint256 uuid);
+    event retireEvent (bool isChanged);
     struct CarbonCredits {
         uint256 uuid;
         address owner_addr;
@@ -50,19 +51,25 @@ contract ReceiverPays {
     }
     
     // retireCredits to retire Carbon Credits
-    function retireCredits(address _address) public payable{
+    function retireCredits(address _address) public payable returns(bool){
+        bool isChanged = false;
         for(uint256 i = 0; i< holdings[_address].length; i++){
-            if (now> holdings[_address][i].ttl)
+            if (now> holdings[_address][i].ttl && holdings[_address][i].retired == false){
                 holdings[_address][i].retired = true;
+                isChanged = true;
+            }
         }
+        emit retireEvent(isChanged);
+        return isChanged;
     }
     
     function viewCurrentBalance(address _address) public view returns (uint256){
        uint256 balance = 0;
        for(uint256 i = 0; i < holdings[_address].length; i++) {
-           balance += holdings[_address][i].amount;
+           if(holdings[_address][i].retired == false){
+                balance += holdings[_address][i].amount;
+           }
        }
-       
        return balance;
     }
     

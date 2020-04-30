@@ -19,6 +19,7 @@ contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 data_store = {}
 purchase_request_store={}
 user_store = {}
+retired_store = {}
 tx_history = {}
 user_comments = {}
 user_comments_count = 0
@@ -44,6 +45,7 @@ def update_file(file_name, variable):
 user_store = initialize_file('user_store.json')
 data_store = initialize_file('data_store.json')
 purchase_request_store = initialize_file('purchase_request_store.json')
+retired_store = initialize_file('retired_store.json')
 tx_history = initialize_file('tx_history.json')
 cc_generated_chart_data = initialize_file('cc_generated_chart_data.json')
 cc_generated_leaderboard_data = initialize_file('cc_generated_leaderboard_data.json')
@@ -211,7 +213,8 @@ def sell():
             with open(save_dir, "rb") as signed_doc:
                 signed_doc_str = signed_doc.read()
                 signed_doc_hash = generate_hash(signed_doc_str)
-                result, uuid, tx_hash = addCredits(signed_doc_hash, addr, payload['amount'], int(payload['time_period'])*30*86400)
+                # result, uuid, tx_hash = addCredits(signed_doc_hash, addr, payload['amount'], int(payload['time_period'])*30*86400)
+                result, uuid, tx_hash = addCredits(signed_doc_hash, addr, payload['amount'], int(payload['time_period']))
                 if (result):
                     payload['uuid'] = uuid
                     if addr in data_store.keys():
@@ -221,12 +224,12 @@ def sell():
                     update_file('data_store.json', data_store)
                     # add transaction to transaction history
                     update_transaction_history(tx_hash, WALLET_ADDRESS, addr)
-                    return render_template("index.html", notif = "Certificate added to blockchain", ds = data_store)
+                    return render_template("index.html", notif = "Certificate added to blockchain", ds = data_store, session=Session)
                 else:
-                    return render_template("index.html", notif = "Failed!2", ds= data_store)
+                    return render_template("index.html", notif = "Failed!2", ds= data_store, session=Session)
         except Exception as e:
             print(e)
-            return render_template("index.html", notif = "Failed!", ds= data_store)
+            return render_template("index.html", notif = "Failed!", ds= data_store, session=Session, CONTRACT_ADDR=CONTRACT_ADDR, WALLET_ADDRESS=WALLET_ADDRESS)
 
     return render_template('sell.html', session=Session)
 
@@ -243,7 +246,7 @@ def requests():
         print(requests)
         print(len(requests))
 
-    return render_template('requests.html',len=len(requests),requests=requests, session=Session)
+    return render_template('requests.html',len=len(requests),requests=requests, session=Session, CONTRACT_ADDR=CONTRACT_ADDR, WALLET_ADDRESS=WALLET_ADDRESS)
 
 
 @app.route('/logout')
@@ -345,6 +348,9 @@ def go_to_user_history():
 
 def get_cc_balance():
     return str(contract.functions.viewCurrentBalance(user_store[Session['username']]['wallet_address']).call())
+
+def get_wallet_balance(wallet_address):
+    return str(contract.functions.viewCurrentBalance(wallet_address).call())
 
 @app.route('/about_us', methods=['GET','POST'])
 def about_us():
@@ -513,6 +519,38 @@ def cc_bought_per_month():
     return display_data_list
 
 
-      
 
+@app.route('/retire', methods=['GET','POST'])
+@login_required
+def retire():
+    if request.method == 'POST':
+        data = request.get_json()
+        print(data)
+        if data['is_changed'] == True:
+            address = data['wallet_address']
+            uuid = data['uuid']
+            if address not in retired_store.keys():
+                retired_store[address] = []
+            if address not in data_store.keys():
+                data_store[address] = []
+            retired_store[address].extend([x for x in data_store[address] if int(x['uuid'])==uuid])
+            data_store[address] = [x for x in data_store[address] if int(x['uuid'])!= uuid]
+            update_file('data_store.json', data_store)
+            update_file('retired_store.json', retired_store)
+            if address not in purchase_request_store.keys():
+                purchase_request_store[address] = []
+            purchase_request_store[address] = [x for x in purchase_request_store[address] if int(x['uuid'])!= uuid]
+            update_file('purchase_request_store.json', purchase_request_store)
+
+            tx_hash = data['tx_hash']
+            from_addr = data['from_addr']
+            to_addr = data['to_addr']
+            update_transaction_history(tx_hash, from_addr, to_addr)
+            update_file('tx_history.json', tx_history)
+    # ccowners={}
+    # for wallet in data_store.keys():
+        # ccowners[wallet] = get_wallet_balance(wallet)
     
+    return render_template('retire.html', data_store=data_store,purchase_request_store=purchase_request_store, session=Session, CONTRACT_ADDR=CONTRACT_ADDR, WALLET_ADDRESS=WALLET_ADDRESS)
+
+

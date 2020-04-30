@@ -20,6 +20,19 @@ abi="""
 		"type": "event"
 	},
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "isChanged",
+				"type": "bool"
+			}
+		],
+		"name": "retireEvent",
+		"type": "event"
+	},
+	{
 		"constant": false,
 		"inputs": [
 			{
@@ -65,7 +78,13 @@ abi="""
 			}
 		],
 		"name": "retireCredits",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
 		"payable": true,
 		"stateMutability": "payable",
 		"type": "function"
