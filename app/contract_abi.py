@@ -1,4 +1,4 @@
-abi="""
+abi = """
 [
 	{
 		"constant": false,
@@ -46,7 +46,13 @@ abi="""
 			}
 		],
 		"name": "retireCredits",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
 		"payable": true,
 		"stateMutability": "payable",
 		"type": "function"

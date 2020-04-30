@@ -1,11 +1,48 @@
 {% extends "base.html" %}
 {% block content %}
+
+<h2>Carbon Credits possessed</h2>
+
 {% for owner in data_store.keys() %}
+{% if data_store[owner] %}
 <div class="row">
 	<div class="col-md-8"><h3>{{owner}}</h3></div>
 </div>
 <hr>
+{% endif %}
 {% for project in data_store[owner] %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="panel">
+            <div class="panel-heading">
+				<h3 class="panel-title">{{project['name_of_project']}}</h3>
+                <div class="right">
+                    <button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+                    <button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
+                </div>
+            </div>
+            <div class="panel-body">
+                <p>{{project['amount']}} CC</p>
+                <div class="right">
+                    <button class="btn btn-danger" onclick="retire('{{owner}}',{{project.uuid}})">RETIRE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endfor %}
+
+<h2>Carbon Credits for sale</h2>
+
+{% for owner in purchase_request_store.keys() %}
+{% if purchase_request_store[owner] %}
+<div class="row">
+	<div class="col-md-8"><h3>{{owner}}</h3></div>
+</div>
+<hr>
+{% endif %}
+{% for project in purchase_request_store[owner] %}
 <div class="row">
     <div class="col-md-8">
         <div class="panel">
@@ -41,7 +78,7 @@
 			console.log('Web3: ', web3);
             web3.eth.defaultAccount = web3.eth.accounts[0];
 			console.log('default account: ', web3.eth.defaultAccount);
-        	const abi = [
+        	const abi=[
 	{
 		"constant": false,
 		"inputs": [
@@ -88,7 +125,13 @@
 			}
 		],
 		"name": "retireCredits",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
 		"payable": true,
 		"stateMutability": "payable",
 		"type": "function"
@@ -164,8 +207,7 @@
 		"type": "function"
 	}
 ];
-				myContract = new web3.eth.Contract(abi, addr);
-				console.log("My Contract:")
+			myContract = new web3.eth.Contract(abi, addr);
 				console.log(myContract);
 			});
 
@@ -180,7 +222,13 @@
             else{
                 tx_hash=res;
 
-                console.log(tx_hash);
+                // window.location.reload();
+            }
+        }).on('receipt', function(event){
+			console.log('EVENT BELOW')
+			console.log(event);
+
+			console.log(tx_hash);
                 //TODO send POST to remove the retired CCs
                 $.ajax({
                     dataType:"json",
@@ -196,9 +244,7 @@
                     })
                 })
                 alert("Credits retired successfully!");
-                window.location.reload();
-            }
-        });
+		});
     }
 </script>
 {% endblock %}
