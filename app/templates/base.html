@@ -82,7 +82,10 @@
 								<li><a href="#"><i class="lnr lnr-user"></i> <span>My Profile</span></a></li>
 								<li><a href="#"><i class="lnr lnr-envelope"></i> <span>Message</span></a></li>
 								<li><a href="{{url_for('requests')}}"><i class="lnr lnr-exit"></i> <span>Pending Requests</span></a></li>
-								<li><a href="{{url_for('sell')}}"><i class="lnr lnr-exit"></i> <span>Generate CC</span></a></li>
+								{% if session['username']=='un@unfdccc.com' %}
+								<li class="admin"><a href="{{url_for('sell')}}"><i class="lnr lnr-exit"></i> <span>Generate CC</span></a></li>
+								<li class="admin"><a href="{{url_for('retire')}}"><i class="lnr lnr-cross"></i> <span>Retire CC</span></a></li>
+								{% endif %}
 								<li><a href="{{url_for('buy')}}"><i class="lnr lnr-exit"></i> <span>Buy</span></a></li>
 								<li><a href="{{url_for('user_transaction_history')}}"><i class="lnr lnr-history"></i> <span>History</span></a></li>
 								<li><a href="#"><i class="lnr lnr-cog"></i> <span>Settings</span></a></li>
