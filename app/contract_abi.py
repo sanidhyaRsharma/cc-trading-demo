@@ -1,5 +1,37 @@
-abi = """
+abi="""
 [
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "uuid",
+				"type": "uint256"
+			}
+		],
+		"name": "addEvent",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "isChanged",
+				"type": "bool"
+			}
+		],
+		"name": "retireEvent",
+		"type": "event"
+	},
 	{
 		"constant": false,
 		"inputs": [
@@ -86,25 +118,6 @@ abi = """
 		"payable": true,
 		"stateMutability": "payable",
 		"type": "function"
-	},
-	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "uuid",
-				"type": "uint256"
-			}
-		],
-		"name": "addEvent",
-		"type": "event"
 	},
 	{
 		"constant": true,

@@ -348,26 +348,27 @@ def retire():
     if request.method == 'POST':
         data = request.get_json()
         print(data)
-        address = data['wallet_address']
-        uuid = data['uuid']
-        if address not in retired_store.keys():
-            retired_store[address] = []
-        if address not in data_store.keys():
-            data_store[address] = []
-        retired_store[address].extend([x for x in data_store[address] if int(x['uuid'])==uuid])
-        data_store[address] = [x for x in data_store[address] if int(x['uuid'])!= uuid]
-        update_file('data_store.json', data_store)
-        update_file('retired_store.json', retired_store)
-        if address not in purchase_request_store.keys():
-            purchase_request_store[address] = []
-        purchase_request_store[address] = [x for x in purchase_request_store[address] if int(x['uuid'])!= uuid]
-        update_file('purchase_request_store.json', purchase_request_store)
+        if data['is_changed'] == True:
+            address = data['wallet_address']
+            uuid = data['uuid']
+            if address not in retired_store.keys():
+                retired_store[address] = []
+            if address not in data_store.keys():
+                data_store[address] = []
+            retired_store[address].extend([x for x in data_store[address] if int(x['uuid'])==uuid])
+            data_store[address] = [x for x in data_store[address] if int(x['uuid'])!= uuid]
+            update_file('data_store.json', data_store)
+            update_file('retired_store.json', retired_store)
+            if address not in purchase_request_store.keys():
+                purchase_request_store[address] = []
+            purchase_request_store[address] = [x for x in purchase_request_store[address] if int(x['uuid'])!= uuid]
+            update_file('purchase_request_store.json', purchase_request_store)
 
-        tx_hash = data['tx_hash']
-        from_addr = data['from_addr']
-        to_addr = data['to_addr']
-        update_transaction_history(tx_hash, from_addr, to_addr)
-        update_file('tx_history.json', tx_history)
+            tx_hash = data['tx_hash']
+            from_addr = data['from_addr']
+            to_addr = data['to_addr']
+            update_transaction_history(tx_hash, from_addr, to_addr)
+            update_file('tx_history.json', tx_history)
     # ccowners={}
     # for wallet in data_store.keys():
         # ccowners[wallet] = get_wallet_balance(wallet)
