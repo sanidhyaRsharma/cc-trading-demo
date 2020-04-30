@@ -78,7 +78,7 @@
 			console.log('Web3: ', web3);
             web3.eth.defaultAccount = web3.eth.accounts[0];
 			console.log('default account: ', web3.eth.defaultAccount);
-        	const abi=[
+        	const abi = [
 	{
 		"constant": false,
 		"inputs": [
@@ -116,6 +116,25 @@
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "uuid",
+				"type": "uint256"
+			}
+		],
+		"name": "addEvent",
+		"type": "event"
+	},
+	{
 		"constant": false,
 		"inputs": [
 			{
@@ -135,6 +154,19 @@
 		"payable": true,
 		"stateMutability": "payable",
 		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "isChanged",
+				"type": "bool"
+			}
+		],
+		"name": "retireEvent",
+		"type": "event"
 	},
 	{
 		"constant": false,
@@ -167,25 +199,6 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "uuid",
-				"type": "uint256"
-			}
-		],
-		"name": "addEvent",
-		"type": "event"
-	},
-	{
 		"constant": true,
 		"inputs": [
 			{
@@ -206,8 +219,7 @@
 		"stateMutability": "view",
 		"type": "function"
 	}
-];
-			myContract = new web3.eth.Contract(abi, addr);
+]; myContract = new web3.eth.Contract(abi, addr);
 				console.log(myContract);
 			});
 
@@ -227,7 +239,7 @@
         }).on('receipt', function(event){
 			console.log('EVENT BELOW')
 			console.log(event);
-
+			var isChanged = event.events.retireEvent.returnValues.isChanged;
 			console.log(tx_hash);
                 //TODO send POST to remove the retired CCs
                 $.ajax({
@@ -240,11 +252,17 @@
                         from_addr: owner_address,
                         to_addr: addr,
                         wallet_address: wallet_address,
-						uuid: uuid
+						uuid: uuid,
+						is_changed: isChanged
                     })
                 })
-                alert("Credits retired successfully!");
-				window.location.reload()
+				if (event.events.retireEvent.returnValues.isChanged == true){
+                	alert("Credits retired successfully!");
+				}
+				else{
+					alert("Credit retirement failed due to valid TTL");
+				}
+				window.location.reload();
 		});
     }
 </script>

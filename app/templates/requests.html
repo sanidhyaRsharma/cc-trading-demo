@@ -122,7 +122,39 @@ footer a {
 			console.log('Web3: ', web3);
             web3.eth.defaultAccount = web3.eth.accounts[0];
 			console.log('default account: ', web3.eth.defaultAccount);
-        	const abi=[
+        	const abi=[[
+	{
+		"inputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "uuid",
+				"type": "uint256"
+			}
+		],
+		"name": "addEvent",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "isChanged",
+				"type": "bool"
+			}
+		],
+		"name": "retireEvent",
+		"type": "event"
+	},
 	{
 		"constant": false,
 		"inputs": [
@@ -209,25 +241,6 @@ footer a {
 		"payable": true,
 		"stateMutability": "payable",
 		"type": "function"
-	},
-	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "uuid",
-				"type": "uint256"
-			}
-		],
-		"name": "addEvent",
-		"type": "event"
 	},
 	{
 		"constant": true,
