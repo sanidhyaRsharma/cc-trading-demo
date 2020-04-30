@@ -1,0 +1,358 @@
+{% extends "base.html"%}
+{% block content %}
+
+<!-- ROW 1 -->
+<div class="row">
+    <div class="col-md-12"> 
+        <!-- BEGIN BUYING VS. GENERATING CHART -->
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">Buying vs. Generating CC</h3>
+                <div class="right">
+                    <button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+                    <button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
+                </div>
+            </div>
+            <div class="panel-body">
+            <div id="comparison-chart" class="ct-chart"></div>
+            </div>
+        </div>
+        <!-- BEGIN BUYING VS. GENERATING CHART -->
+    </div>
+</div>
+
+<!-- ROW 2 -->
+<div class="row">
+    <div class="col-md-6"> 
+        <!-- BEGIN CC GENERATORS CHART -->
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">CC Generated</h3>
+                <div class="right">
+                    <button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+                    <button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
+                </div>
+            </div>
+            <div class="panel-body">
+            <div id="cc-gen-chart" class="ct-chart"></div>
+            </div>
+        </div>
+        <!-- END CC GENERATORS CHART -->
+    </div>
+
+    <div class="col-md-6"> 
+        <!-- BEGIN CC GENERATOR LEADERBOARD -->
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">CC Generators Leaderboard</h3>
+                <div class="right">
+                    <button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+                    <button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
+                </div>
+            </div>
+            <div class="panel-body no-padding">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in leaderboard.keys()%}
+                        <tr>
+                            <td><span class="label label-warning">{{user}}</span></td>
+                            <td><span class="label label-success">{{leaderboard[user]}}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- END CC GENERATORS LEADERBOARD -->
+    </div>
+</div>
+
+<!-- ROW 3 -->
+<div class="row">
+    <div class="col-md-6"> 
+        <!-- BEGIN TRANSACTIONS -->
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">Transactions</h3>
+                <div class="right">
+                    <button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+                    <button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
+                </div>
+            </div>
+            <div class="panel-body no-padding">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Tx Hash</th>
+                            <th>From</th>
+                            <th>To</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in transactions.keys()%}
+                        <tr>
+                            <td>{{item}}</td>
+                            <td>{{transactions[item]['from_username']}}</td>
+                            <td>{{transactions[item]['to_username']}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-md-6"><span class="panel-note"><i class="fa fa-clock-o"></i> Last 24 hours</span></div>
+                    <div class="col-md-6 text-right"><a href="{{url_for('transaction_history')}}" class="btn btn-primary">View All Transactions</a></div>
+                </div>
+            </div>
+        </div>
+        <!-- END TRANSACTIONS -->
+    </div>
+
+    <div class="col-md-6"> 
+        <!-- BEGIN CC BOUGHT PIE CHART -->
+        <div class="panel">
+            <div class="panel-heading">
+                <h3 class="panel-title">CC Bought</h3>
+                <div class="right">
+                    <button type="button" class="btn-toggle-collapse"><i class="lnr lnr-chevron-up"></i></button>
+                    <button type="button" class="btn-remove"><i class="lnr lnr-cross"></i></button>
+                </div>
+            </div>
+            <div class="panel-body">
+            <div id="cc-bought-chart" class="ct-chart"></div>
+            </div>
+        </div>
+        <!-- END CC BOUGHT PIE CHART-->
+    </div>
+</div>
+
+<!--
+<script src="{{url_for('static', filename='vendor/jquery/jquery.min.js')}}"></script>
+<script src="{{url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js')}}"></script>
+<script src="{{url_for('static', filename='vendor/jquery-slimscroll/jquery.slimscroll.min.js')}}"></script>
+<script src="{{url_for('static', filename='vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js')}}"></script>
+-->
+<script src="{{url_for('static', filename='vendor/chartist/js/chartist.min.js')}}"></script>
+<script src="{{url_for('static', filename='scripts/klorofil-common.js')}}"></script>
+<script>
+    /* CC Generated Chart */
+    data = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
+                series: [
+                        [{% for item in generated %}
+                        {{item}},
+                        {% endfor %}
+                        ]]
+            };
+                    
+    options = {
+                height: 220,
+                axisX: {
+                            showGrid: false
+                        },
+                    };
+                    
+    new Chartist.Bar('#cc-gen-chart', data, options);
+
+    /* CC bought Chart */
+    var chart = new Chartist.Pie('#cc-bought-chart', {
+                series: [
+                            {% for item in bought %}
+                                {{item}},
+                            {% endfor %}],
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr']
+                        }, 
+                        {
+                            donut: true,
+                            showLabel: true,
+                            height: 270
+                        });
+
+    chart.on('draw', function(data) {
+    if(data.type === 'slice') {
+        // Get the total path length in order to use for dash array animation
+        var pathLength = data.element._node.getTotalLength();
+
+        // Set a dasharray that matches the path length as prerequisite to animate dashoffset
+        data.element.attr({
+        'stroke-dasharray': pathLength + 'px ' + pathLength + 'px'
+        });
+
+    // Create animation definition while also assigning an ID to the animation for later sync usage
+    var animationDefinition = {
+      'stroke-dashoffset': {
+        id: 'anim' + data.index,
+        dur: 1000,
+        from: -pathLength + 'px',
+        to:  '0px',
+        easing: Chartist.Svg.Easing.easeOutQuint,
+        // We need to use `fill: 'freeze'` otherwise our animation will fall back to initial (not visible)
+        fill: 'freeze'
+      }
+    };
+
+    // If this was not the first slice, we need to time the animation so that it uses the end sync event of the previous animation
+    if(data.index !== 0) {
+      animationDefinition['stroke-dashoffset'].begin = 'anim' + (data.index - 1) + '.end';
+    }
+
+    // We need to set an initial value before the animation starts as we are not in guided mode which would do that for us
+    data.element.attr({
+      'stroke-dashoffset': -pathLength + 'px'
+    });
+
+        // We can't use guided mode as the animations need to rely on setting begin manually
+        // See http://gionkunz.github.io/chartist-js/api-documentation.html#chartistsvg-function-animate
+        data.element.animate(animationDefinition, false);
+    }
+    });
+
+    // For the sake of the example we update the chart every time it's created with a delay of 8 seconds
+    chart.on('created', function() {
+    if(window.__anim21278907124) {
+        clearTimeout(window.__anim21278907124);
+        window.__anim21278907124 = null;
+    }
+    window.__anim21278907124 = setTimeout(chart.update.bind(chart), 10000);
+    });
+
+
+    /* Buying vs. Generating Chart */
+    var chart = new Chartist.Line('#comparison-chart', {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
+                series: [
+                    [{% for item in bought %}
+                        {{item}},
+                    {% endfor %}],
+                    [{% for item in generated %}
+                        {{item}},
+                    {% endfor %}
+                ]]
+                }, {
+                    low: 0,
+                    height: 400
+                });
+
+    // Let's put a sequence number aside so we can use it in the event callbacks
+    var seq = 0,
+    delays = 80,
+    durations = 500;
+
+    // Once the chart is fully created we reset the sequence
+    chart.on('created', function() {
+    seq = 0;
+    });
+
+    // On each drawn element by Chartist we use the Chartist.Svg API to trigger SMIL animations
+    chart.on('draw', function(data) {
+    seq++;
+
+    if(data.type === 'line') {
+        // If the drawn element is a line we do a simple opacity fade in. This could also be achieved using CSS3 animations.
+        data.element.animate({
+        opacity: {
+            // The delay when we like to start the animation
+            begin: seq * delays + 1000,
+            // Duration of the animation
+            dur: durations,
+            // The value where the animation should start
+            from: 0,
+            // The value where it should end
+            to: 1
+        }
+        });
+    } else if(data.type === 'label' && data.axis === 'x') {
+        data.element.animate({
+        y: {
+            begin: seq * delays,
+            dur: durations,
+            from: data.y + 100,
+            to: data.y,
+            // We can specify an easing function from Chartist.Svg.Easing
+            easing: 'easeOutQuart'
+        }
+        });
+    } else if(data.type === 'label' && data.axis === 'y') {
+        data.element.animate({
+        x: {
+            begin: seq * delays,
+            dur: durations,
+            from: data.x - 100,
+            to: data.x,
+            easing: 'easeOutQuart'
+        }
+        });
+    } else if(data.type === 'point') {
+        data.element.animate({
+        x1: {
+            begin: seq * delays,
+            dur: durations,
+            from: data.x - 10,
+            to: data.x,
+            easing: 'easeOutQuart'
+        },
+        x2: {
+            begin: seq * delays,
+            dur: durations,
+            from: data.x - 10,
+            to: data.x,
+            easing: 'easeOutQuart'
+        },
+        opacity: {
+            begin: seq * delays,
+            dur: durations,
+            from: 0,
+            to: 1,
+            easing: 'easeOutQuart'
+        }
+        });
+    } else if(data.type === 'grid') {
+        // Using data.axis we get x or y which we can use to construct our animation definition objects
+        var pos1Animation = {
+        begin: seq * delays,
+        dur: durations,
+        from: data[data.axis.units.pos + '1'] - 30,
+        to: data[data.axis.units.pos + '1'],
+        easing: 'easeOutQuart'
+        };
+
+    var pos2Animation = {
+      begin: seq * delays,
+      dur: durations,
+      from: data[data.axis.units.pos + '2'] - 100,
+      to: data[data.axis.units.pos + '2'],
+      easing: 'easeOutQuart'
+    };
+
+    var animations = {};
+    animations[data.axis.units.pos + '1'] = pos1Animation;
+    animations[data.axis.units.pos + '2'] = pos2Animation;
+    animations['opacity'] = {
+      begin: seq * delays,
+      dur: durations,
+      from: 0,
+      to: 1,
+      easing: 'easeOutQuart'
+    };
+
+    data.element.animate(animations);
+  }
+});
+
+// For the sake of the example we update the chart every time it's created with a delay of 10 seconds
+chart.on('created', function() {
+  if(window.__exampleAnimateTimeout) {
+    clearTimeout(window.__exampleAnimateTimeout);
+    window.__exampleAnimateTimeout = null;
+  }
+  window.__exampleAnimateTimeout = setTimeout(chart.update.bind(chart), 12000);
+});
+</script>
+{%endblock%}
