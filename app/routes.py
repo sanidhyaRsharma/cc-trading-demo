@@ -13,6 +13,7 @@ import datetime
 
 Session = {}
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 w3 = Web3(HTTPProvider('http://localhost:7545'))
 contract = w3.eth.contract(address=CONTRACT_ADDR, abi = abi)
 
@@ -186,10 +187,34 @@ def send_request():
 
     return render_template('send-request.html',data=seller_data, session=Session)
     
+@app.route('/generate-hash', methods=['POST'])
+@login_required
+def request_generate_hash():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'certificate' not in request.files:
+            print('Certificate is missing')
+            return json.dumps({'success':False}), 502, {'ContentType':'application/json'}
+        else:
+            print('file found')
+        file = request.files['certificate']
+        if file.filename == '':
+            print('No selected file')
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+        with open(os.path.join(app.config['UPLOAD_FOLDER'], file.filename), "rb") as signed_doc:
+            signed_doc_str = signed_doc.read()
+            signed_doc_hash = generate_hash(signed_doc_str)
+        return json.dumps({'success':True, 'file_hash':signed_doc_hash}), 200, {'ContentType':'application/json'}
+    return json.dumps({'success':False}), 503, {'ContentType':'application/json'}
+
+
 
 @app.route('/sell', methods=['GET','POST'])
 @login_required
 def sell():
+    print(Session['username'])
+    username = Session['username']
+    print(user_store[username],user_store[Session['username']]['wallet_address'])
     if user_store[Session['username']]['wallet_address'] != WALLET_ADDRESS:
         return """
             <h3>Access Denied</h3>
@@ -200,38 +225,64 @@ def sell():
         # address_of_owner: address
         # amount : uint256
         # ttl : seconds
-        payload = {}
-        payload['name_of_project'] = request.form.get('title')
-        payload['reference_num'] = request.form.get('ref-num')
-        payload['amount'] = request.form.get('amount')
-        payload['time_period'] = request.form.get('time-period')
-        addr = request.form.get('wallet-address')
-        save_dir = os.path.join(os.getcwd(), 'xyz.pdf')
+        payload = request.get_json()
+        print('Payload received', payload)
+
+        # payload['name_of_project'] = request.form.get('title')
+        # payload['reference_num'] = request.form.get('ref-num')
+        # payload['amount'] = request.form.get('amount')
+        # payload['time_period'] = request.form.get('time-period')
+        # addr = request.form.get('wallet-address')
+        # save_dir = os.path.join(os.getcwd(), 'xyz.pdf')
 
         # Save newly created Carbon Credit to blockchain
         try :
-            with open(save_dir, "rb") as signed_doc:
-                signed_doc_str = signed_doc.read()
-                signed_doc_hash = generate_hash(signed_doc_str)
+            # with open(save_dir, "rb") as signed_doc:
+                # signed_doc_str = signed_doc.read()
+                # signed_doc_hash = generate_hash(signed_doc_str)
                 # result, uuid, tx_hash = addCredits(signed_doc_hash, addr, payload['amount'], int(payload['time_period'])*30*86400)
-                result, uuid, tx_hash = addCredits(signed_doc_hash, addr, payload['amount'], int(payload['time_period']))
-                if (result):
-                    payload['uuid'] = uuid
-                    if addr in data_store.keys():
-                        data_store[addr].append(payload)
-                    else:
-                        data_store[addr] = [payload]
-                    update_file('data_store.json', data_store)
-                    # add transaction to transaction history
-                    update_transaction_history(tx_hash, WALLET_ADDRESS, addr)
-                    return render_template("index.html", notif = "Certificate added to blockchain", ds = data_store, session=Session)
+                # result, uuid, tx_hash = addCredits(signed_doc_hash, addr, payload['amount'], int(payload['time_period']))
+
+            # update cc balance
+            Session['balance'] = get_cc_balance()
+            print('Balance updated')
+            # update cc_generated_chart_data
+            store_cc_generated_data(int(payload['amount']))
+            print('updated charts')
+
+            # update cc_generated_leaderboard_data
+            store_cc_generated_leaderboard(address_to_username(payload['addr']), int(payload['amount']))
+            print('updated leaderboard')
+
+            result = payload.pop('result', None)
+            uuid = payload.pop('uuid', None)
+            if uuid == None:
+                uuid = 0
+            else:
+                uuid = int(uuid)
+            print(uuid)
+            tx_hash = payload.pop('tx_hash', None)
+            addr = payload.pop('addr', None)
+            if (result):
+                payload['uuid'] = uuid
+                if addr in data_store.keys():
+                    data_store[addr].append(payload)
                 else:
-                    return render_template("index.html", notif = "Failed!2", ds= data_store, session=Session)
+                    data_store[addr] = [payload]
+                update_file('data_store.json', data_store)
+                # add transaction to transaction history
+                update_transaction_history(tx_hash, WALLET_ADDRESS, addr)
+                # return render_template("index.html", notif = "Certificate added to blockchain", ds = data_store, session=Session)
+                flash('added')
+                return json.dumps({'success': True}), 200, {'ContentType':'application/json'}
+            else:
+                return render_template("index.html", notif = "Failed!2", ds= data_store, session=Session)
         except Exception as e:
             print(e)
-            return render_template("index.html", notif = "Failed!", ds= data_store, session=Session, CONTRACT_ADDR=CONTRACT_ADDR, WALLET_ADDRESS=WALLET_ADDRESS)
+            flash('failed')
+            return json.dumps({'success': False}), 502, {'ContentType':'application/json'}
 
-    return render_template('sell.html', session=Session)
+    return render_template('sell.html', session=Session, CONTRACT_ADDR=CONTRACT_ADDR, WALLET_ADDRESS=WALLET_ADDRESS)
 
 @app.route('/requests')
 @login_required
@@ -342,7 +393,6 @@ def user_transaction_history():
     else:
         return render_template('transaction-history.html', transaction = user_transaction_history, session=Session)
  
-@login_required
 def go_to_user_history():
     return redirect(url_for('user_transaction_history'))
 

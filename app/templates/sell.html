@@ -1,36 +1,267 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-6">
-            <form action="" method="POST" enctype=multipart/form-data>
-                <div class="form-group">
-                    <label for="title">Title of project:</label>
-                    <input type="text" class="form-control" id="title" name="title" placeholder="Eg. 60 MW Solar PV - Monte Plaza" required>
-                </div>
-                <div class="form-group">
-                    <label for="ref-num">UNFCCC reference number of project activity:</label>
-                    <input type="text" class="form-control" id="ref-num" name="ref-num" placeholder="Eg. 00000" required>
-                </div>
-                <div class="form-group">
-                    <label for="carbon-credits">Certified amount of GHG emission reductions or GHG removals for this monitoring period:</label>
-                    <input type="number" id="carbon-credits" name="amount" placeholder="Amount in tCO2e" class="form-control" min="1" required>
-                </div>
-                <div class="form-group">
-                    <label for="time-period">Period of validity:</label>
-                    <input type="number" class="form-control" id="time-period" name="time-period" placeholder="Time in number of months" min="1" required>
-                </div>
-                <div class="form-group">
-                    <label for="wallet-address">Address of owner</label>
-                    <input type="text" class="form-control" id="wallet-address" name="wallet-address" placeholder="Address" pattern="0x[a-zA-z0-9]+" minlength="42" maxlength="42" required>
-                </div>
-                <div class="custom-file">
-                    <label class="custom-file-label" for="custom-file">Upload signed certificate</label>
-                    <input type="file" class="custom-file-input" id="custom-file" name="certificate" required>
-                </div>
-                <br/>
-                <button type="submit" id="saveButton" class="btn btn-primary"> Submit </button>
-            </form>
+<div class="row">
+    <div class="col-md-6">
+        <!-- <form id="generate-cc-form" enctype=multipart/form-data> -->
+        <div class="form-group">
+            <label for="title">Title of project:</label>
+            <input type="text" class="form-control" id="title" name="title"
+                placeholder="Eg. 60 MW Solar PV - Monte Plaza" required>
         </div>
+        <div class="form-group">
+            <label for="ref-num">UNFCCC reference number of project activity:</label>
+            <input type="text" class="form-control" id="ref-num" name="ref-num" placeholder="Eg. 00000" required>
+        </div>
+        <div class="form-group">
+            <label for="carbon-credits">Certified amount of GHG emission reductions or GHG removals for this monitoring
+                period:</label>
+            <input type="number" id="carbon-credits" name="amount" placeholder="Amount in tCO2e" class="form-control"
+                min="1" required>
+        </div>
+        <div class="form-group">
+            <label for="time-period">Period of validity:</label>
+            <input type="number" class="form-control" id="time-period" name="time-period"
+                placeholder="Time in number of months" min="1" required>
+        </div>
+        <div class="form-group">
+            <label for="wallet-address">Address of owner</label>
+            <input type="text" class="form-control" id="wallet-address" name="wallet-address" placeholder="Address"
+                pattern="0x[a-zA-z0-9]+" minlength="42" maxlength="42" required>
+        </div>
+        <div class="custom-file">
+            <label class="custom-file-label" for="custom-file">Upload signed certificate</label>
+            <input type="file" class="custom-file-input" id="custom-file" name="certificate" required>
+        </div>
+        <br />
+        <button id="saveButton" class="btn btn-primary" onclick="sell()"> Submit </button>
+        <!-- </form> -->
     </div>
+</div>
+
+<script>
+    var myContract;
+    const addr = '{{CONTRACT_ADDR|safe}}';
+    const owner_address = '{{WALLET_ADDRESS|safe}}';
+    window.addEventListener('load', async () => {
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+        }
+        else {
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+        }
+        console.log('Web3: ', web3);
+        web3.eth.defaultAccount = web3.eth.accounts[0];
+        console.log('default account: ', web3.eth.defaultAccount);
+        const abi = [
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "_certi_hash",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_owner_address",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_amount",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_ttl",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "addCredits",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": true,
+                "stateMutability": "payable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "payable": false,
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "uuid",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "addEvent",
+                "type": "event"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_address",
+                        "type": "address"
+                    }
+                ],
+                "name": "retireCredits",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "payable": true,
+                "stateMutability": "payable",
+                "type": "function"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "bool",
+                        "name": "isChanged",
+                        "type": "bool"
+                    }
+                ],
+                "name": "retireEvent",
+                "type": "event"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_owner_address",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "_receiver_address",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_uuid",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "transferCredits",
+                "outputs": [],
+                "payable": true,
+                "stateMutability": "payable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "_address",
+                        "type": "address"
+                    }
+                ],
+                "name": "viewCurrentBalance",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ]; myContract = new web3.eth.Contract(abi, addr);
+        console.log(myContract);
+    });
+    function sell() {
+        var tx_hash;
+        var title_form = document.getElementById('title');
+        var ref_num_form = document.getElementById('ref-num');
+        var ccs_form = document.getElementById('carbon-credits');
+        var time_period_form = document.getElementById('time-period');
+        var wallet_address_form = document.getElementById('wallet-address');
+        var file_input_form = document.getElementById('custom-file');
+        var file_hash;
+        var form_data = new FormData();
+        form_data.append('certificate', file_input_form.files[0])
+        console.log(file_input_form.files[0])
+        console.log(form_data)
+        debugger;
+        $.ajax({
+            type: 'POST',
+            url: '/generate-hash',
+            data: form_data,
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function (data) {
+                console.log('RESPONSE DATA');
+                console.log(data);
+                console.log('Success!');
+                var file_hash = (JSON.parse(data)).file_hash;
+                console.log(file_hash + typeof (file_hash));
+                var time_period = (time_period_form.value) * 30 * 86400;
+                console.log(time_period);
+                myContract.methods.addCredits(file_hash, wallet_address_form.value, ccs_form.value, time_period)
+                    .send({ from: owner_address }, function (err, res) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        else {
+                            tx_hash = res;
+                        }
+                    }).on('receipt', function (event) {
+                        console.log('EVENT BELOW')
+                        console.log(event);
+                        var uuid = event.events.addEvent.returnValues.uuid;
+                        console.log('tx_hash');
+                        //TODO send POST to remove the retired CCs
+                        $.ajax({
+                            dataType: "json",
+                            contentType: "application/json",
+                            method: "post",
+                            url: "/sell",
+                            data: JSON.stringify({
+                                tx_hash: tx_hash,
+                                result: true,
+                                uuid: uuid,
+                                addr: wallet_address_form.value,
+                                name_of_project: title_form.value,
+                                reference_num: ref_num_form.value,
+                                amount: ccs_form.value,
+                                time_period: time_period_form.value,
+                            }),
+                            success:function(res){
+                                window.location.href = "/index";
+                            }
+                        });
+                    });
+            },
+        });
+    }
+</script>
 {% endblock %}
