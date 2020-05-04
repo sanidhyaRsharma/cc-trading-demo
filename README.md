@@ -28,18 +28,16 @@ Create `app/contract_abi.py` and paste the abi of your compiled contract's ABI a
 
 `abi = """ YOUR ABI HERE """`
 
-Change the contract address, abi and port in `app/templates/requests.html`
+Change the abi and port in `app/templates/requests.html`, `app/templates/sell.html` and `app/templates/retire.html`
 
 Change user_store.json to include the correct wallet addresses.
-
-Clear tx_history.json, purchase_request_store.json, and data_store.json files.
 
 Create a file called `app/config.py` and insert the following data in it(Added to prevent constant changing of testing params after every pull)
 
 ```python
 CONTRACT_ADDR = 'YOUR_CONTRACT_ADDRESS'
-WALLET_PRIVATE_KEY = 'PRIVATE_KEY_OF_CA'
-WALLET_ADDRESS = 'WALLET_ADDRESS_OF_ABOVE_PRIVATE_KEY'
+WALLET_ADDRESS = 'WALLET_ADDRESS_OF_ISSUER'
+UPLOAD_FOLDER = '/uploads'
 ```
 
 To run the project:
