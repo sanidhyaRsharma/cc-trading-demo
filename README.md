@@ -14,8 +14,6 @@ Deploy the smart contract on remix with 'Web3 Provider' option selected and then
 
 Also replace the corresponding addresses at the start of app/routes.py
 
-The above project has been tested with Ganache. Carefully modify the code in app/routes.py if you want to switch to a different Ethereum test client(such as Infuria)
-
 Remember to update your dependencies.txt file before pushing your update in case you install modules. Use the following command:
 
 `python -m pip freeze > dependencies.txt`
