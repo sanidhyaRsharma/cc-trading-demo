@@ -9,7 +9,7 @@
 	<!-- VENDOR CSS -->
 	<link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css')}}">
 	<link rel="stylesheet" href="{{url_for('static', filename='vendor/font-awesome/css/font-awesome.min.css')}}">
-	<link rel="stylesheet" href="{{url_for('static', filename='vendor/linearicons/style.css')}}">
+	<lin￼k rel="stylesheet" href="{{url_for('static', filename='vendor/linearicons/style.css')}}">
 	<link rel="stylesheet" href="{{url_for('static', filename='vendor/chartist/css/chartist-custom.css')}}">
 	<!-- MAIN CSS -->
 	<link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
@@ -82,7 +82,7 @@
 								<li><a href="#"><i class="lnr lnr-user"></i> <span>My Profile</span></a></li>
 								<li><a href="#"><i class="lnr lnr-envelope"></i> <span>Message</span></a></li>
 								<li><a href="{{url_for('requests')}}"><i class="lnr lnr-exit"></i> <span>Pending Requests</span></a></li>
-								{% if session['username']=='un@unfdccc.com' %}
+								{% if session['username']=='un@unfccc.com' %}
 								<li class="admin"><a href="{{url_for('sell')}}"><i class="lnr lnr-exit"></i> <span>Generate CC</span></a></li>
 								<li class="admin"><a href="{{url_for('retire')}}"><i class="lnr lnr-cross"></i> <span>Retire CC</span></a></li>
 								{% endif %}
